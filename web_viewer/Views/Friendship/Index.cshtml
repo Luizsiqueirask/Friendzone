@@ -1,0 +1,40 @@
+﻿@model IEnumerable<web_viewer.Models.Perfil.Friendship>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_new.cshtml";
+}
+
+<h2>View</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Person)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Friends)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Person)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Friends)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.Person }) |
+            @Html.ActionLink("Details", "Details", new { id = item.Person }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Person })
+        </td>
+    </tr>
+}
+
+</table>

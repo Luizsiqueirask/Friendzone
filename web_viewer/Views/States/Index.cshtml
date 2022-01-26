@@ -1,0 +1,53 @@
+﻿@model IEnumerable<web_viewer.Models.Places.StatesCountry>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_new.cshtml";
+}
+
+<h2>View</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.States.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Countries.Label)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Countries.Flag.Symbol)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.States.Label)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.States.Id)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Countries.Label)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Countries.Flag.Symbol)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.States.Label)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.States.Id }) |
+        @Html.ActionLink("Details", "Details", new { id = item.States.Id }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.States.Id })
+    </td>
+</tr>
+    }
+
+</table>

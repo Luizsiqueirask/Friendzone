@@ -1,0 +1,51 @@
+﻿@model IEnumerable<web_viewer.Models.Perfil.FriendsCountry>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_new.cshtml";
+}
+
+<h2>Friend - View</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Friends.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Countries.Label)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Friends.Picture.Symbol)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Friends.Contacts.Mobile)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.Friends.FirstName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Countries.Label)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Friends.Picture.Symbol)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Friends.Contacts.Mobile)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.Friends.Id }) |
+        @Html.ActionLink("Details", "Details", new { id = item.Friends.Id }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.Friends.Id })
+    </td>
+</tr>
+}
+</table>

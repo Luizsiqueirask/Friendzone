@@ -1,0 +1,52 @@
+﻿@model IEnumerable<web_viewer.Models.Perfil.PersonCountry>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_new.cshtml";
+}
+
+<h2>Person - View</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.People.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Countries.Label)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.People.Picture.Symbol)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.People.Contacts.Mobile)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.People.FirstName)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Countries.Label)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.People.Picture.Symbol)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.People.Contacts.Mobile)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.People.Id }) |
+        @Html.ActionLink("Details", "Details", new { id = item.People.Id }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.People.Id })
+    </td>
+</tr>
+     }
+</table>

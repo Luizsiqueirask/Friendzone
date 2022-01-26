@@ -1,0 +1,31 @@
+﻿@model web_viewer.Models.Places.StatesCountry
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout_new.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>States</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <th>
+            @Html.DisplayNameFor(model => model.States.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Countries.Label)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Countries.Flag.Symbol)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.States.Label)
+        </th>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.States.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

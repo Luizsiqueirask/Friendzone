@@ -1,0 +1,66 @@
+﻿@model web_viewer.Models.Perfil.FriendsCountry
+
+@{
+    ViewBag.Title = "Friends - Details";
+    Layout = "~/Views/Shared/_Layout_new.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Friends</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Friends.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Friends.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Friends.LastName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Friends.LastName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Friends.Age)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Friends.Age)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Friends.Birthday)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Friends.Birthday)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Friends.Contacts.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Friends.Contacts.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Countries.Label)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Countries.Label)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Friends.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
