@@ -60,7 +60,7 @@ namespace api_perfil.Persistence
         {
             var people = classPerson.Get(Id);
 
-            if (people.Id.Equals(Id))
+            if (people != null)
             {
                 var contact = new Contacts()
                 {

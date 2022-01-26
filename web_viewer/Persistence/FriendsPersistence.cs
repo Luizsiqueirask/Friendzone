@@ -70,7 +70,7 @@ namespace web_viewer.Persistence
             if (friends.IsSuccessStatusCode)
             {
                 var friend = await friends.Content.ReadAsAsync<Friends>();
-                var countries = await _clientFriends.GetCountryById(friend.Id);
+                var countries = await _clientFriends.GetCountryById(friend.CountryId);
                 var country = await countries.Content.ReadAsAsync<Country>();
 
                 if (countries.IsSuccessStatusCode)
@@ -116,7 +116,7 @@ namespace web_viewer.Persistence
                 Email = friends.Contacts.Email,
                 Mobile = friends.Contacts.Mobile
             };
-            var _friends = new Friends()
+            var friend = new Friends()
             {
                 Id = friends.Id,
                 FirstName = friends.FirstName,
@@ -128,9 +128,9 @@ namespace web_viewer.Persistence
                 CountryId = friends.CountryId
             };
 
-            var friend = await _clientFriends.PostFriends(_friends);
+            var _friend = await _clientFriends.PostFriends(friend);
 
-            if (friend.IsSuccessStatusCode)
+            if (_friend.IsSuccessStatusCode)
             {
                 return true;
             }

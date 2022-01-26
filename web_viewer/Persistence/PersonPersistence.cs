@@ -70,7 +70,7 @@ namespace web_viewer.Persistence
             if (people.IsSuccessStatusCode)
             {
                 var person = await people.Content.ReadAsAsync<Person>();
-                var countries = await _clientPerson.GetCountryById(person.Id);
+                var countries = await _clientPerson.GetCountryById(person.CountryId);
                 var country = await countries.Content.ReadAsAsync<Country>();
 
                 if (countries.IsSuccessStatusCode)

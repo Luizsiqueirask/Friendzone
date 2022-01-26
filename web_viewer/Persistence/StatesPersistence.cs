@@ -37,23 +37,20 @@ namespace web_viewer.Persistence
                     {
                         foreach (var country in countries)
                         {
-                            if (state.CountryId == country.Id)
-                            {   
-                                // Together models from States and Country
-                                var statesCountry = new StatesCountry()
-                                {
-                                    States = state,
-                                    Countries = country,
-                                    CountriesSelect = new List<SelectListItem>() {
+                            // Together models from States and Country
+                            var statesCountry = new StatesCountry()
+                            {
+                                States = state,
+                                Countries = country,
+                                CountriesSelect = new List<SelectListItem>() {
                                     new SelectListItem() {
                                         Value = state.Id.ToString(),
                                         Text = state.Label,
                                         Selected = country.Id == state.CountryId
                                     }
                                 }
-                                };
-                                containerStatesCountry.Add(statesCountry);
-                            }
+                            };
+                            containerStatesCountry.Add(statesCountry);
                         }
                     }
                 }               
@@ -63,56 +60,35 @@ namespace web_viewer.Persistence
         }
         public async Task<StatesCountry> Get(int? Id)
         {
-            var allStates = await _clientStates.GetCountryById(Id);
+            var states = await _clientStates.GetStatesById(Id);
+            var statesCountry = new StatesCountry();
 
-            if (allStates.IsSuccessStatusCode)
+            if (states.IsSuccessStatusCode)
             {
-                var states = await allStates.Content.ReadAsAsync<States>();
-                var allCountries = await _clientStates.GetStatesById(states.CountryId);
-                var countries = await allCountries.Content.ReadAsAsync<Country>();
+                var state = await states.Content.ReadAsAsync<States>();
+                var countries = await _clientStates.GetCountryById(state.CountryId);
+                var country = await countries.Content.ReadAsAsync<Country>();
 
-                var flagCountry = new Flag()
+                if (countries.IsSuccessStatusCode)
                 {
-                    Id = countries.Flag.Id,
-                    Symbol = countries.Flag.Symbol,
-                    Path = countries.Flag.Path
-                };
-                var country = new Country()
-                {
-                    Id = states.Id,
-                    Label = states.Label,
-                    Flag = flagCountry
-                };
-                var flagStates = new Flag()
-                {
-                    Id = states.Flag.Id,
-                    Symbol = states.Flag.Symbol,
-                    Path = states.Flag.Path
-                };
-                var state = new States()
-                {
-                    Id = states.Id,
-                    Label = states.Label,
-                    CountryId = countries.Id,
-                    Flag = flagStates
-                };
-                var statesCountry = new StatesCountry()
-                {
-                    States = state,
-                    Countries = country,
-                    CountrySelect = new SelectListItem()
+                    statesCountry = new StatesCountry()
                     {
-                        Value = state.Id.ToString(),
-                        Text = state.Label,
-                        Selected = country.Id == state.CountryId
-                    }
-                };
+                        States = state,
+                        Countries = country,
+                        CountrySelect = new SelectListItem()
+                        {
+                            Value = state.Id.ToString(),
+                            Text = state.Label,
+                            Selected = country.Id == state.CountryId
+                        }
+                    };
+                }
                 return statesCountry;
             }
             return new StatesCountry();
         }
         // public async Task<States> Detail(int? Id) { }
-        public async Task<StatesCountry> Create()
+        /*public async Task<StatesCountry> Create()
         {
 
             var statesCountry = new StatesCountry();
@@ -135,7 +111,7 @@ namespace web_viewer.Persistence
                 statesCountry.CountriesSelect = countrySelectedList;
             }
             return statesCountry;
-        }
+        }*/
         public async Task<Boolean> Post(States statesView)
         {
             HttpFileCollectionBase requestFile = Request.Files;

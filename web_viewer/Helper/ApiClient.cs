@@ -12,7 +12,7 @@ namespace web_viewer.Helper
     {
         public readonly HttpClient _clientPlace;
         public readonly HttpClient _clientPerfil;
-        public readonly List<int> ports = new List<int>() { 62678, 60341 };
+        private readonly List<int> ports = new List<int>() { 62678, 60341 };
 
         public ApiClient()
         {

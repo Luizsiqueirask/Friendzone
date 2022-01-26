@@ -50,7 +50,7 @@ namespace api_places.Persistence
         {
             var states = classStates.Get(Id);
             
-            if (states.Equals(Id))
+            if (states != null)
             {
                 var flag = new Flag()
                 {

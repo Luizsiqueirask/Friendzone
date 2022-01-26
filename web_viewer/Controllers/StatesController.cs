@@ -7,7 +7,7 @@ namespace web_viewer.Controllers
 {
     public class StatesController : Controller
     {
-        public readonly StatesPersistence clientStates;
+        private readonly StatesPersistence clientStates;
 
         public StatesController()
         {
@@ -31,8 +31,8 @@ namespace web_viewer.Controllers
         // GET: States/Create
         public async Task<ActionResult> Create()
         {
-            var allStates = await clientStates.Create();
-            return View(allStates);
+            //var allStates = await clientStates.Create();
+            return View(new States());
         }
 
         // POST: States/Create

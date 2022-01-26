@@ -432,9 +432,6 @@ AS BEGIN
 	-- Flag
 	INNER JOIN [dbo].[Flags] f1
 	ON s1.FlagId = f1.Id
-	-- Country
-	INNER JOIN [dbo].[Countries] c1
-	ON s1.CountryId = c1.Id
 	WHERE s1.Id = @IdStates
 END
 GO;

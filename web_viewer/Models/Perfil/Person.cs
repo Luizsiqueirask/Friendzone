@@ -34,7 +34,6 @@ namespace web_viewer.Models.Perfil
     {
         public Country Countries { get; set; }
         public Person People { get; set; }
-        public Contacts Contacts { get; set; }
         public SelectListItem CountrySelect { get; set; }
         public IEnumerable<SelectListItem> CountriesSelect { get; set; }
     }

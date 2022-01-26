@@ -32,7 +32,7 @@ namespace web_viewer.Controllers
         public async Task<ActionResult> Create()
         {
             //var getFriends = await clientFriends.List();
-            return View(new Person());
+            return View(new Friends());
         }
 
         // POST: Friends/Create

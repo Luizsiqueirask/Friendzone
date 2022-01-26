@@ -7,12 +7,6 @@ namespace web_viewer.Models.Perfil
 {
     public class Friendship
     {
-        /*public Friendship(int PersonId = 0, int FriendsId = 0)
-        {
-            this.PersonId = PersonId;
-            this.FriendsId = FriendsId;
-        }*/
-
         [Required(ErrorMessage = "Informe a pessoa")]
         [DisplayName("Pessoa")]
         public int PersonId { get; set; }

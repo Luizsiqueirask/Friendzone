@@ -81,17 +81,16 @@ namespace Library.Context.Places.States
 
                 while (dataReader.Read())
                 {
-                    var flagStates = new FlagDomain()
-                    {
-                        Id = (int)dataReader["Id"],
-                        Symbol = dataReader["Symbol"].ToString(),
-                        Path = dataReader["Path"].ToString()
-                    };
                     stateDomain = new StateDomain()
                     {
                         Id = (int)dataReader["Id"],
                         Label = dataReader["Label"].ToString(),
-                        Flag = flagStates,
+                        Flag = new FlagDomain()
+                        {
+                            Id = (int)dataReader["Id"],
+                            Symbol = dataReader["Symbol"].ToString(),
+                            Path = dataReader["Path"].ToString()
+                        },
                         CountryId = (int)dataReader["CountryId"]
                     };
                 }
