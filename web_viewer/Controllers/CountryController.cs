@@ -31,8 +31,8 @@ namespace web_viewer.Controllers
         // GET: Country/Create
         public async Task<ActionResult> Create()
         {
-            var listCountry = await clientCountry.List();
-            return View(listCountry);
+            //var listCountry = await clientCountry.List();
+            return View(new Country());
         }
 
         // POST: Country/Create

@@ -5,32 +5,56 @@
     Layout = "~/Views/Shared/_Layout_new.cshtml";
 }
 
-<h2>Create</h2>
-
-@using (Html.BeginForm("Create", "Country", FormMethod.Post, new { enctype = "multipart/form-data" })) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Country</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Label, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Label, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Label, "", new { @class = "text-danger" })
+<div class="form-horizontal shadow p-3 mb-5 bg-body rounded">
+    <h4>Country</h4>
+    <hr />
+    <div class="container card-body rounded-top">
+        <div class="row">
+            <div class="form-group col-sm-4">
+                <div class="text-center">
+                    <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar rounded-circle img-thumbnail col-sm-6" alt="avatar">
+                    <h6>Upload a different photo...</h6>
+                    <input type="file" class="text-center center-block file-upload">
+                </div>
             </div>
-        </div>
+            <div class="col-sm-8">
+                <div class="tab-content">
+                    <div class="table-bordered active" id="home">
+                        @using (Html.BeginForm("Create", "States", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="container">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Label, htmlAttributes: new { @class = "control-label col-md-5" })
+                                    <div class="col-md-12">
+                                        @Html.EditorFor(model => model.Label, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Label, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <br>
+                                        <button class="form-control btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i> Save</button>
+                                        <button class="form-control btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Reset</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-offset-2 col-md-10">
+                                            <input type="submit" value="Create" class="btn btn-default" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-}
-
+</div>
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>

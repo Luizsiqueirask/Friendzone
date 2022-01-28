@@ -25,7 +25,7 @@ use Friendzone;
 								
 
 ----------------------------------------------------------
-				  /* Creating Tables */
+				  /* CREATE TABLES */
 ----------------------------------------------------------
 
 -- Creating Contacts
@@ -83,7 +83,7 @@ CREATE TABLE [dbo].[Countries] (
 	[FlagId] INT NOT NULL,
 	-- Created_at DATETIME2 UNIQUE DEFAULT CURRENT_TIMESTAMP,
     -- Updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY (FlagId) REFERENCES [dbo].[Flags](Id)
+	CONSTRAINT FK_Flags_Countries_Id FOREIGN KEY (FlagId) REFERENCES [dbo].[Flags](Id)
 ); 
 ELSE
 	PRINT 'Countries - Exists this table !!!'
@@ -100,8 +100,8 @@ CREATE TABLE [dbo].[States] (
 	[CountryId] INT NOT NULL,
 	-- Created_at DATETIME2 UNIQUE DEFAULT CURRENT_TIMESTAMP,
     -- Updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY ([FlagId]) REFERENCES [dbo].[Flags](Id),
-	FOREIGN KEY ([CountryId]) REFERENCES [dbo].[Countries](Id)
+	-- FOREIGN KEY ([FlagId]) REFERENCES [dbo].[Flags](Id),
+	-- FOREIGN KEY ([CountryId]) REFERENCES [dbo].[Countries](Id)
 ); 
 ELSE
 	PRINT 'States - Exists this table !!!'
@@ -122,9 +122,9 @@ CREATE TABLE [dbo].[Person] (
 	[ContactId] INT NOT NULL,
 	-- Created_at DATETIME2 UNIQUE DEFAULT CURRENT_TIMESTAMP,
     -- Updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY (PictureId) REFERENCES [dbo].[Pictures](Id),
-	FOREIGN KEY (CountryId) REFERENCES [dbo].[Countries](Id),
-	FOREIGN KEY (ContactId) REFERENCES [dbo].[Contacts](Id)
+	-- FOREIGN KEY (PictureId) REFERENCES [dbo].[Pictures](Id),
+	-- FOREIGN KEY (CountryId) REFERENCES [dbo].[Countries](Id),
+	-- FOREIGN KEY (ContactId) REFERENCES [dbo].[Contacts](Id)
 );
 ELSE
 	PRINT 'Person - Exists this table !!!'
@@ -145,9 +145,9 @@ CREATE TABLE [dbo].[Friends] (
 	[ContactId] INT NOT NULL,
 	-- Created_at DATETIME2 UNIQUE DEFAULT CURRENT_TIMESTAMP,
     -- Updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY (PictureId) REFERENCES [dbo].[Pictures](Id),
-	FOREIGN KEY (CountryId) REFERENCES [dbo].[Countries](Id),
-	FOREIGN KEY (ContactId) REFERENCES [dbo].[Contacts](Id)
+	-- FOREIGN KEY (PictureId) REFERENCES [dbo].[Pictures](Id),
+	-- FOREIGN KEY (CountryId) REFERENCES [dbo].[Countries](Id),
+	-- FOREIGN KEY (ContactId) REFERENCES [dbo].[Contacts](Id)
 );
 
 ELSE
@@ -165,15 +165,93 @@ CREATE TABLE [dbo].[Friendship](
 	-- Created_at DATETIME2 UNIQUE DEFAULT CURRENT_TIMESTAMP,
     -- Updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
 	-- PRIMARY KEY([PersonId], [FriendsId]),
-	FOREIGN KEY (PersonId) REFERENCES [dbo].[Person](Id),
-    FOREIGN KEY (FriendsId) REFERENCES [dbo].[Friends](Id)
+	-- FOREIGN KEY (PersonId) REFERENCES [dbo].[Person](Id),
+    -- FOREIGN KEY (FriendsId) REFERENCES [dbo].[Friends](Id)
 );
 
 ELSE
 	PRINT 'Friendship - Exists this table !!!'
 GO
 
-insert into Friendship (PersonId, FriendsId) values (2, 2);
+
+----------------------------------------------------------
+				  /* ALTER TABLES */
+----------------------------------------------------------
+
+-- Creating Contacts
+
+
+ALTER TABLE [dbo].[Contacts]
+	ADD Id INT IDENTITY(1,1) PRIMARY KEY NOT NULL;
+GO
+
+-- Creating Pictures
+
+ALTER TABLE [dbo].[Pictures]
+	ADD Id INT IDENTITY(1,1) PRIMARY KEY NOT NULL;
+GO
+
+-- Creating Flags
+
+ALTER TABLE [dbo].[Flags]
+	ADD Id INT IDENTITY(1,1) PRIMARY KEY NOT NULL;
+	ADD Created_at DATE UNIQUE DEFAULT CURRENT_TIMESTAMP,
+    ADD Updated_at DATE DEFAULT CURRENT_TIMESTAMP,
+GO
+
+-- Creating Countries
+
+ALTER TABLE [dbo].[Countries]
+	Id INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	-- Created_at DATETIME2 UNIQUE DEFAULT CURRENT_TIMESTAMP,
+    -- Updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (FlagId) REFERENCES [dbo].[Flags](Id)
+GO
+
+-- Creating States
+
+ALTER TABLE [dbo].[States] 
+	[Id] INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	ADD Created_at DATETIME2 UNIQUE DEFAULT CURRENT_TIMESTAMP,
+    ADD Updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY ([FlagId]) REFERENCES [dbo].[Flags](Id),
+	FOREIGN KEY ([CountryId]) REFERENCES [dbo].[Countries](Id)
+GO
+
+-- Creating Person
+
+ALTER TABLE [dbo].[Person] (
+	[Id] INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	ADD Created_at DATETIME2 UNIQUE DEFAULT CURRENT_TIMESTAMP,
+    ADD Updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (PictureId) REFERENCES [dbo].[Pictures](Id),
+	FOREIGN KEY (CountryId) REFERENCES [dbo].[Countries](Id),
+	FOREIGN KEY (ContactId) REFERENCES [dbo].[Contacts](Id)
+GO
+
+-- Creating Friends
+
+ALTER TABLE [dbo].[Friends] (
+	[Id] INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	ADD Created_at DATETIME2 UNIQUE DEFAULT CURRENT_TIMESTAMP,
+    ADD Updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (PictureId) REFERENCES [dbo].[Pictures](Id),
+	FOREIGN KEY (CountryId) REFERENCES [dbo].[Countries](Id),
+	FOREIGN KEY (ContactId) REFERENCES [dbo].[Contacts](Id)
+GO
+
+-- Creating Friendship
+
+ALTER TABLE [dbo].[Friendship]
+	Id INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+	[PersonId] INT  NOT NULL,
+	[FriendsId] INT NOT NULL,
+	Created_at DATETIME2 UNIQUE DEFAULT CURRENT_TIMESTAMP,
+    Updated_at DATETIME2 DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY([PersonId], [FriendsId]),
+	ADD CONSTRAINT fk_person_friendship FOREIGN KEY (PersonId) REFERENCES [dbo].[Person](Id) ON DELETE CASCADE,
+    ADD CONSTRAINT fk_friends_friendship FOREIGN KEY (FriendsId) REFERENCES [dbo].[Friends](Id) ON DELETE CASCADE,
+GO
 
 ----------------------------------------------------------
 				  /* Listing Tables */

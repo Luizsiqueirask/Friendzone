@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Author></Author>
+      <!-- Your name -->
+      <Description></Description>
+      <!-- Description which will be displayed on right panel of Code Snippets Manager window-->
+      <Shortcut></Shortcut>
+      <!-- Shortcut to be used in code(e.g: cw will become Console.WriteLine())-->
+      <Title></Title>
+      <!-- Title which will be displayed on left panel of Code Snippets Manager window-->
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+        <!--Expansion, SurroundsWith, Refactoring-->
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <!-- Literal or Object-->
+        <Literal>
+          <ID>s</ID>
+          <!-- param which will be referenced in template and editable by user(e.g: $s$) -->
+          <Default>Hello</Default>          
+        </Literal>
+      </Declarations>
+      <Code Language="CSharp">
+        <!-- Languages: VB, CSharp, Javascript, ...-->
+        <![CDATA[
+            System.Console.WriteLine($s$);
+        ]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

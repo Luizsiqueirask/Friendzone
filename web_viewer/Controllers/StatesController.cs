@@ -31,8 +31,8 @@ namespace web_viewer.Controllers
         // GET: States/Create
         public async Task<ActionResult> Create()
         {
-            //var allStates = await clientStates.Create();
-            return View(new States());
+            var allStates = await clientStates.Create();
+            return View(allStates);
         }
 
         // POST: States/Create

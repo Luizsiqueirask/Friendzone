@@ -87,31 +87,32 @@ namespace web_viewer.Persistence
             }
             return new StatesCountry();
         }
-        // public async Task<States> Detail(int? Id) { }
-        /*public async Task<StatesCountry> Create()
-        {
 
-            var statesCountry = new StatesCountry();
+        public async Task<StatesCountry> Create()
+        {
             var allCountries = await _clientStates.GetCountry();
+            var statesCountry = new StatesCountry();
 
             if (allCountries.IsSuccessStatusCode)
             {
-                var countries = await allCountries.Content.ReadAsAsync<IEnumerable<StatesCountry>>();
-                var countrySelectedList = new List<SelectListItem>();
+                var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
+                var selectCountryList = new List<SelectListItem>();
+
                 foreach (var country in countries)
                 {
-                    var countrySelected = new SelectListItem
-                    {
-                        Value = country.Countries.Id.ToString(),
-                        Text = country.Countries.Label,
-                        Selected = country.Countries.Id == statesCountry.States.CountryId
+                    var selectCountry = new SelectListItem()
+                    {   
+                        Value = country.Id.ToString(),
+                        Text = country.Label,
+                        Selected = country.Id == statesCountry.States.CountryId
                     };
-                    countrySelectedList.Add(countrySelected);
+                    selectCountryList.Add(selectCountry);
                 }
-                statesCountry.CountriesSelect = countrySelectedList;
+                statesCountry.CountriesSelect = selectCountryList;
             }
-            return statesCountry;
-        }*/
+            return new StatesCountry();
+        }
+
         public async Task<Boolean> Post(States statesView)
         {
             HttpFileCollectionBase requestFile = Request.Files;

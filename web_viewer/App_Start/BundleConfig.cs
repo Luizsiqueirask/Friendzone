@@ -18,14 +18,12 @@ namespace web_viewer
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
-            bundles.Add(new ScriptBundle("~/bundles/scripts")
-                .Include("~/Scripts/bootstrap.js")
+            bundles.Add(new ScriptBundle("~/bundles/scripts/")
                 .Include("~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css")
-                .Include("~/Content/bootstrap.css")
-                .Include("~/Content/site.css"));
-
+                .Include("~/Content/bootstrap.min.css")
+                .Include("~/Content/Site.css"));
         }
     }
 }
