@@ -31,8 +31,8 @@ namespace web_viewer.Controllers
         // GET: Friends/Create
         public async Task<ActionResult> Create()
         {
-            //var getFriends = await clientFriends.List();
-            return View(new Friends());
+            var listFriends = await clientFriends.Create();
+            return View(listFriends);
         }
 
         // POST: Friends/Create

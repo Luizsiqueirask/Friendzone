@@ -57,13 +57,14 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Countries.Label, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <!-->div class="form-group">
+                                    Html.LabelFor(model => model.Countries.Label, htmlAttributes: new { class = "control-label col-md-2" })
                                     <div class="col-md-12">
-                                        @Html.DropDownListFor(model => model.Countries.Id, new SelectList(Model.CountriesSelect, "Value", "Text"))
-                                        @Html.ValidationMessageFor(model => model.Countries.Label, "", new { @class = "text-danger" })
+                                        Html.DropDownListFor(model => model.Countries.Id, new SelectList(Model.CountriesSelect, "Value", "Text"))
+                                        Html.ValidationMessageFor(model => model.Countries.Label, "", new { class = "text-danger" })
                                     </div>
-                                </div>
+                                </div-->
+
                                 <div class="form-group">
                                     <div class="col-xs-12">
                                         <br>
