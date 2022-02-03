@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using web_viewer.Models.Places;
 using web_viewer.Persistence;
@@ -31,8 +32,8 @@ namespace web_viewer.Controllers
         // GET: States/Create
         public async Task<ActionResult> Create()
         {
-            var allStates = await clientStates.Create();
-            return View(allStates);
+           var listStates = await clientStates.Create();
+            return View(listStates);
         }
 
         // POST: States/Create

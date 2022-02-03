@@ -23,56 +23,48 @@
                         @using (Html.BeginForm("Create", "Person", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
                             @Html.AntiForgeryToken()
-                            <div class="container">
+                        <div class="container">
 
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.People.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
-                                    <div class="col-md-12">
-                                        @Html.EditorFor(model => model.People.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.People.FirstName, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.People.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
-                                    <div class="col-md-12">
-                                        @Html.EditorFor(model => model.People.LastName, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.People.LastName, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.People.Age, htmlAttributes: new { @class = "control-label col-md-2" })
-                                    <div class="col-md-12">
-                                        @Html.EditorFor(model => model.People.Age, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.People.Age, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.People.Birthday, htmlAttributes: new { @class = "control-label col-md-2" })
-                                    <div class="col-md-12">
-                                        @Html.EditorFor(model => model.People.Birthday, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.People.Birthday, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-
-                                <!-->div class="form-group">
-                                    Html.LabelFor(model => model.Countries.Label, htmlAttributes: new { class = "control-label col-md-2" })
-                                    <div class="col-md-12">
-                                        Html.DropDownListFor(model => model.Countries.Id, new SelectList(Model.CountriesSelect, "Value", "Text"))
-                                        Html.ValidationMessageFor(model => model.Countries.Label, "", new { class = "text-danger" })
-                                    </div>
-                                </div-->
-
-                                <div class="form-group">
-                                    <div class="col-xs-12">
-                                        <br>
-                                        <button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i> Save</button>
-                                        <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Reset</button>
-                                    </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.People.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.People.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.People.FirstName, "", new { @class = "text-danger" })
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.People.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.People.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.People.LastName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.People.Age, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.People.Age, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.People.Age, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.People.Birthday, htmlAttributes: new { @class = "control-label col-md-4" })
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.People.Birthday, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.People.Birthday, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <br>
+                                    <button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i> Save</button>
+                                    <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Reset</button>
+                                </div>
+                            </div>
+                        </div>
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                         }
                     </div>

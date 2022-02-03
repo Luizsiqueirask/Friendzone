@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
@@ -87,32 +88,44 @@ namespace web_viewer.Persistence
             }
             return new StatesCountry();
         }
-
-        public async Task<StatesCountry> Create()
+        public async Task<IEnumerable<StatesCountry>> Create()
         {
+            var allStates = await _clientStates.GetStates();
             var allCountries = await _clientStates.GetCountry();
-            var statesCountry = new StatesCountry();
+            var containerStatesCountry = new List<StatesCountry>();
 
-            if (allCountries.IsSuccessStatusCode)
+            if (allStates.IsSuccessStatusCode)
             {
+                var states = await allStates.Content.ReadAsAsync<IEnumerable<States>>();
                 var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
-                var selectCountryList = new List<SelectListItem>();
 
-                foreach (var country in countries)
+                if (allCountries.IsSuccessStatusCode)
                 {
-                    var selectCountry = new SelectListItem()
-                    {   
-                        Value = country.Id.ToString(),
-                        Text = country.Label,
-                        Selected = country.Id == statesCountry.States.CountryId
-                    };
-                    selectCountryList.Add(selectCountry);
+                    foreach (var state in states)
+                    {
+                        foreach (var country in countries)
+                        {
+                            // Together models from States and Country
+                            var statesCountry = new StatesCountry()
+                            {
+                                States = state,
+                                Countries = country,
+                                CountriesSelect = new List<SelectListItem>() {
+                                    new SelectListItem() {
+                                        Value = country.Id.ToString(),
+                                        Text = country.Label,
+                                        Selected = country.Id == state.CountryId
+                                    }
+                                }
+                            };
+                            containerStatesCountry.Add(statesCountry);
+                        }
+                    }
                 }
-                statesCountry.CountriesSelect = selectCountryList;
+                return containerStatesCountry;
             }
-            return new StatesCountry();
+            return new List<StatesCountry>();
         }
-
         public async Task<Boolean> Post(States statesView)
         {
             HttpFileCollectionBase requestFile = Request.Files;
@@ -150,7 +163,6 @@ namespace web_viewer.Persistence
 
             return false;
         }
-        //public async Task<States> Update(int? Id) { }
         public async Task<Boolean> Put(States statesView, int? Id)
         {
             HttpFileCollectionBase requestFile = Request.Files;
@@ -190,7 +202,6 @@ namespace web_viewer.Persistence
 
             return false;
         }
-        //public async Task<States> Detail(int? Id) { }
         public async Task<States> Delete(int? Id)
         {
             var deleteStates = await _clientStates.DeleteStates(Id);

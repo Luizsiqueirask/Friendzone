@@ -29,10 +29,10 @@ namespace web_viewer.Controllers
         }
 
         // GET: Friends/Create
-        public async Task<ActionResult> Create()
+        public ActionResult Create()
         {
-            var listFriends = await clientFriends.Create();
-            return View(listFriends);
+            //var listFriends = await clientFriends.List();
+            return View(new FriendsCountry());
         }
 
         // POST: Friends/Create

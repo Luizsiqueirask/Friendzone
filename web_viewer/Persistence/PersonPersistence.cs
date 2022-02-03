@@ -91,30 +91,29 @@ namespace web_viewer.Persistence
             }
             return new PersonCountry();
         }
-        public async Task<StatesCountry> Create()
+        public async Task<PersonCountry> Create()
         {
             var allCountries = await _clientPerson.GetCountry();
-            var selectCountry = new SelectListItem();
+            var personCountry = new PersonCountry();
 
             if (allCountries.IsSuccessStatusCode)
             {
                 var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
                 var selectCountryList = new List<SelectListItem>();
-                var statesCountry = new StatesCountry();
 
                 foreach (var country in countries)
                 {
-                    selectCountry = new SelectListItem()
+                    var selectCountry = new SelectListItem()
                     {
                         Value = country.Id.ToString(),
                         Text = country.Label,
-                        Selected = country.Id == statesCountry.States.CountryId
+                        Selected = country.Id == personCountry.People.CountryId
                     };
                     selectCountryList.Add(selectCountry);
                 }
-                statesCountry.CountriesSelect = selectCountryList;
+                personCountry.CountriesSelect = selectCountryList;
             }
-            return new StatesCountry();
+            return personCountry;
         }
         public async Task<Boolean> Post(Person person)
         {

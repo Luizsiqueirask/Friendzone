@@ -94,26 +94,30 @@ namespace web_viewer.Persistence
         public async Task<StatesCountry> Create()
         {
             var allCountries = await _clientFriends.GetCountry();
+            var allStates = await _clientFriends.GetStates();
+            var statesCountry = new StatesCountry();
 
-            if (allCountries.IsSuccessStatusCode)
+            if (allStates.IsSuccessStatusCode)
             {
-                var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
-                var selectCountryList = new List<SelectListItem>();
-                var statesCountry = new StatesCountry();
-
-                foreach (var country in countries)
+                if (allCountries.IsSuccessStatusCode)
                 {
-                    var selectCountry = new SelectListItem()
+                    var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
+                    var selectCountryList = new List<SelectListItem>();
+
+                    foreach (var country in countries)
                     {
-                        Value = country.Id.ToString(),
-                        Text = country.Label,
-                        Selected = country.Id == statesCountry.States.CountryId
-                    };
-                    selectCountryList.Add(selectCountry);
+                        var selectCountry = new SelectListItem()
+                        {
+                            Value = country.Id.ToString(),
+                            Text = country.Label,
+                            Selected = country.Id == statesCountry.Countries.Id
+                        };
+                        selectCountryList.Add(selectCountry);
+                    }
+                    statesCountry.CountriesSelect = selectCountryList;
                 }
-                statesCountry.CountriesSelect = selectCountryList;
             }
-            return new StatesCountry();
+            return statesCountry;
         }
         public async Task<Boolean> Post(Friends friends)
         {

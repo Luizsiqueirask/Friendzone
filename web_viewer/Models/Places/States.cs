@@ -22,6 +22,6 @@ namespace web_viewer.Models.Places
         public States States { get; set; }
         public Country Countries { get; set; }
         public SelectListItem CountrySelect { get; set; }
-        public IEnumerable<SelectListItem> CountriesSelect { get; set; }
+        public List<SelectListItem> CountriesSelect { get; set; }
     }
 }

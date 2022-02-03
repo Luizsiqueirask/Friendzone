@@ -8,15 +8,15 @@
 <h2>View</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create", new { @class = "btn btn-info" })
 </p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Person)
+            @Html.DisplayNameFor(model => model.PersonId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Friends)
+            @Html.DisplayNameFor(model => model.FriendsId)
         </th>
         <th></th>
     </tr>
@@ -24,15 +24,15 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Person)
+            @Html.DisplayFor(modelItem => item.PersonId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Friends)
+            @Html.DisplayFor(modelItem => item.FriendsId)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.Person }) |
-            @Html.ActionLink("Details", "Details", new { id = item.Person }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.Person })
+            @Html.ActionLink("Edit", "Edit", new { id = item.PersonId }) |
+            @Html.ActionLink("Details", "Details", new { id = item.PersonId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.PersonId })
         </td>
     </tr>
 }
