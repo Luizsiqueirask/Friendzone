@@ -21,11 +21,11 @@ namespace web_viewer.Persistence
             _blobClient = new BlobClient();
         }
 
-        public async Task<IEnumerable<FriendsCountry>> List()
+        public async Task<IEnumerable<FriendsCountries>> List()
         {
             var allFriends = await _clientFriends.GetFriends();
             var allCountries = await _clientFriends.GetCountry();
-            var containerFriendsCountry = new List<FriendsCountry>();
+            var containerFriendsCountries = new List<FriendsCountries>();
 
             if (allFriends.IsSuccessStatusCode)
             {
@@ -41,7 +41,7 @@ namespace web_viewer.Persistence
                             if (friend.CountryId == country.Id)
                             {
                                 // Together models from Friends and Country
-                                var friendsCountry = new FriendsCountry()
+                                var friendsCountries = new FriendsCountries()
                                 {
                                     Friends = friend,
                                     Countries = country,
@@ -53,19 +53,19 @@ namespace web_viewer.Persistence
                                     }
                                 }
                                 };
-                                containerFriendsCountry.Add(friendsCountry);
+                                containerFriendsCountries.Add(friendsCountries);
                             }
                         }
                     }
                 }
-                return containerFriendsCountry;
+                return containerFriendsCountries;
             }
-            return new List<FriendsCountry>();
+            return new List<FriendsCountries>();
         }
-        public async Task<FriendsCountry> Get(int? Id)
+        public async Task<FriendsCountries> Get(int? Id)
         {
             var friends = await _clientFriends.GetFriendsById(Id);
-            var friendsCountry = new FriendsCountry();
+            var friendsCountries = new FriendsCountries();
 
             if (friends.IsSuccessStatusCode)
             {
@@ -75,7 +75,7 @@ namespace web_viewer.Persistence
 
                 if (countries.IsSuccessStatusCode)
                 {
-                    friendsCountry = new FriendsCountry()
+                    friendsCountries = new FriendsCountries()
                     {
                         Friends = friend,
                         Countries = country,
@@ -87,15 +87,15 @@ namespace web_viewer.Persistence
                         }
                     };
                 }
-                return friendsCountry;
+                return friendsCountries;
             }
-            return new FriendsCountry();
+            return new FriendsCountries();
         }
-        public async Task<StatesCountry> Create()
+        public async Task<FriendsCountry> Create()
         {
             var allCountries = await _clientFriends.GetCountry();
             var allStates = await _clientFriends.GetStates();
-            var statesCountry = new StatesCountry();
+            var friendsCountry = new FriendsCountry();
 
             if (allStates.IsSuccessStatusCode)
             {
@@ -110,14 +110,15 @@ namespace web_viewer.Persistence
                         {
                             Value = country.Id.ToString(),
                             Text = country.Label,
-                            Selected = country.Id == statesCountry.Countries.Id
+                            Selected = country.Id == friendsCountry.CountryId
                         };
                         selectCountryList.Add(selectCountry);
                     }
-                    statesCountry.CountriesSelect = selectCountryList;
+                    friendsCountry.CountrySelect = selectCountryList;
                 }
+                return friendsCountry;
             }
-            return statesCountry;
+            return new FriendsCountry();
         }
         public async Task<Boolean> Post(Friends friends)
         {
@@ -165,6 +166,35 @@ namespace web_viewer.Persistence
 
             return false;
         }
+        /*public async Task<FriendsCountry> Update()
+        {
+            var allCountries = await _clientFriends.GetCountry();
+            var allStates = await _clientFriends.GetStates();
+            var friendsCountry = new FriendsCountry();
+
+            if (allStates.IsSuccessStatusCode)
+            {
+                if (allCountries.IsSuccessStatusCode)
+                {
+                    var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
+                    var selectCountryList = new List<SelectListItem>();
+
+                    foreach (var country in countries)
+                    {
+                        var selectCountry = new SelectListItem()
+                        {
+                            Value = country.Id.ToString(),
+                            Text = country.Label,
+                            Selected = country.Id == friendsCountry.CountryId
+                        };
+                        selectCountryList.Add(selectCountry);
+                    }
+                    friendsCountry.CountrySelect = selectCountryList;
+                }
+                return friendsCountry;
+            }
+            return new FriendsCountry();
+        }*/
         public async Task<Boolean> Put(Friends friends, int? Id)
         {
             HttpFileCollectionBase requestFile = Request.Files;

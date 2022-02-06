@@ -32,7 +32,7 @@ namespace web_viewer.Controllers
         // GET: States/Create
         public async Task<ActionResult> Create()
         {
-           var listStates = await clientStates.Create();
+            var listStates = await clientStates.Create();
             return View(listStates);
         }
 

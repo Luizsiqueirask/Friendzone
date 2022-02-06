@@ -17,11 +17,24 @@ namespace web_viewer.Models.Places
         [DisplayName("Pais")]
         public int CountryId { get; set; }
     }
-    public class StatesCountry
+    public class StateCountry
+    {
+        public int Id { get; set; }
+        [Required(ErrorMessage = "Informe nome do estado")]
+        [DisplayName("Nome do estado")]
+        public string Label { get; set; }
+        public Flag Flag { get; set; }
+        [Required(ErrorMessage = "Pais")]
+        [DisplayName("Pais")]
+        public int CountryId { get; set; }
+        public IEnumerable<SelectListItem> CountrySelect { get; set; }
+    }
+
+    public class StatesCountries
     {
         public States States { get; set; }
         public Country Countries { get; set; }
         public SelectListItem CountrySelect { get; set; }
-        public List<SelectListItem> CountriesSelect { get; set; }
+        public IEnumerable<SelectListItem> CountriesSelect { get; set; }
     }
 }

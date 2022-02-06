@@ -21,11 +21,11 @@ namespace web_viewer.Persistence
             _blobClient = new BlobClient();
         }
 
-        public async Task<IEnumerable<StatesCountry>> List()
+        public async Task<IEnumerable<StatesCountries>> List()
         {
             var allStates = await _clientStates.GetStates();
             var allCountries = await _clientStates.GetCountry();
-            var containerStatesCountry = new List<StatesCountry>();
+            var containerStatesCountries = new List<StatesCountries>();
 
             if (allStates.IsSuccessStatusCode)
             {
@@ -39,7 +39,7 @@ namespace web_viewer.Persistence
                         foreach (var country in countries)
                         {
                             // Together models from States and Country
-                            var statesCountry = new StatesCountry()
+                            var statesCountries = new StatesCountries()
                             {
                                 States = state,
                                 Countries = country,
@@ -51,18 +51,18 @@ namespace web_viewer.Persistence
                                     }
                                 }
                             };
-                            containerStatesCountry.Add(statesCountry);
+                            containerStatesCountries.Add(statesCountries);
                         }
                     }
                 }               
-                return containerStatesCountry;
+                return containerStatesCountries;
             }
-            return new List<StatesCountry>();
+            return new List<StatesCountries>();
         }
-        public async Task<StatesCountry> Get(int? Id)
+        public async Task<StatesCountries> Get(int? Id)
         {
             var states = await _clientStates.GetStatesById(Id);
-            var statesCountry = new StatesCountry();
+            var statesCountries = new StatesCountries();
 
             if (states.IsSuccessStatusCode)
             {
@@ -72,7 +72,7 @@ namespace web_viewer.Persistence
 
                 if (countries.IsSuccessStatusCode)
                 {
-                    statesCountry = new StatesCountry()
+                    statesCountries = new StatesCountries()
                     {
                         States = state,
                         Countries = country,
@@ -84,47 +84,34 @@ namespace web_viewer.Persistence
                         }
                     };
                 }
-                return statesCountry;
+                return statesCountries;
             }
-            return new StatesCountry();
+            return new StatesCountries();
         }
-        public async Task<IEnumerable<StatesCountry>> Create()
+        public async Task<StateCountry> Create()
         {
-            var allStates = await _clientStates.GetStates();
             var allCountries = await _clientStates.GetCountry();
-            var containerStatesCountry = new List<StatesCountry>();
 
-            if (allStates.IsSuccessStatusCode)
+            if (allCountries.IsSuccessStatusCode)
             {
-                var states = await allStates.Content.ReadAsAsync<IEnumerable<States>>();
                 var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
+                var stateCountry = new StateCountry();
+                var selectCountryList = new List<SelectListItem>();
 
-                if (allCountries.IsSuccessStatusCode)
+                foreach (var country in countries)
                 {
-                    foreach (var state in states)
+                    var selectCountry = new SelectListItem()
                     {
-                        foreach (var country in countries)
-                        {
-                            // Together models from States and Country
-                            var statesCountry = new StatesCountry()
-                            {
-                                States = state,
-                                Countries = country,
-                                CountriesSelect = new List<SelectListItem>() {
-                                    new SelectListItem() {
-                                        Value = country.Id.ToString(),
-                                        Text = country.Label,
-                                        Selected = country.Id == state.CountryId
-                                    }
-                                }
-                            };
-                            containerStatesCountry.Add(statesCountry);
-                        }
-                    }
+                        Value = country.Id.ToString(),
+                        Text = country.Label,
+                        Selected = country.Id == stateCountry.CountryId
+                    };
+                    selectCountryList.Add(selectCountry);
                 }
-                return containerStatesCountry;
+                stateCountry.CountrySelect = selectCountryList;
+                return stateCountry;
             }
-            return new List<StatesCountry>();
+            return new StateCountry();
         }
         public async Task<Boolean> Post(States statesView)
         {

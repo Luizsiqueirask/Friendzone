@@ -21,11 +21,11 @@ namespace web_viewer.Persistence
             _blobClient = new BlobClient();
         }
 
-        public async Task<IEnumerable<PersonCountry>> List()
+        public async Task<IEnumerable<PersonCountries>> List()
         {
             var allPerson = await _clientPerson.GetPerson();
             var allCountries = await _clientPerson.GetCountry();
-            var containerPersonCountry = new List<PersonCountry>();
+            var containerPersonCountry = new List<PersonCountries>();
 
             if (allPerson.IsSuccessStatusCode)
             {
@@ -41,7 +41,7 @@ namespace web_viewer.Persistence
                             if (person.CountryId == country.Id)
                             {   
                                 // Together models from Person and Country
-                                var personCountry = new PersonCountry()
+                                var personCountries = new PersonCountries()
                                 {
                                     People = person,
                                     Countries = country,
@@ -50,22 +50,22 @@ namespace web_viewer.Persistence
                                         Value = person.Id.ToString(),
                                         Text = person.FirstName,
                                         Selected = country.Id == person.CountryId
+                                        }
                                     }
-                                }
                                 };
-                                containerPersonCountry.Add(personCountry);
+                                containerPersonCountry.Add(personCountries);
+                                return containerPersonCountry;
                             }
                         }
                     }
                 }
-                return containerPersonCountry;
             }
-            return new List<PersonCountry>();
+            return new List<PersonCountries>();
         }
-        public async Task<PersonCountry> Get(int? Id)
+        public async Task<PersonCountries> Get(int? Id)
         {
             var people = await _clientPerson.GetPersonById(Id);
-            var personCountry = new PersonCountry();
+            var personCountries = new PersonCountries();
 
             if (people.IsSuccessStatusCode)
             {
@@ -75,7 +75,7 @@ namespace web_viewer.Persistence
 
                 if (countries.IsSuccessStatusCode)
                 {
-                    personCountry = new PersonCountry()
+                    personCountries = new PersonCountries()
                     {
                         People = person,
                         Countries = country,
@@ -87,18 +87,18 @@ namespace web_viewer.Persistence
                         }
                     };
                 }
-                return personCountry;
+                return personCountries;
             }
-            return new PersonCountry();
+            return new PersonCountries();
         }
         public async Task<PersonCountry> Create()
         {
             var allCountries = await _clientPerson.GetCountry();
-            var personCountry = new PersonCountry();
 
             if (allCountries.IsSuccessStatusCode)
             {
                 var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
+                var personCountry = new PersonCountry();
                 var selectCountryList = new List<SelectListItem>();
 
                 foreach (var country in countries)
@@ -107,13 +107,14 @@ namespace web_viewer.Persistence
                     {
                         Value = country.Id.ToString(),
                         Text = country.Label,
-                        Selected = country.Id == personCountry.People.CountryId
+                        Selected = country.Id == personCountry.CountryId
                     };
                     selectCountryList.Add(selectCountry);
                 }
-                personCountry.CountriesSelect = selectCountryList;
+                personCountry.CountrySelect = selectCountryList;
+                return personCountry;
             }
-            return personCountry;
+            return new PersonCountry();
         }
         public async Task<Boolean> Post(Person person)
         {

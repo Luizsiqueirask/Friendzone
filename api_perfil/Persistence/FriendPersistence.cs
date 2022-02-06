@@ -7,8 +7,7 @@ namespace api_perfil.Persistence
 {
     public class FriendPersistence
     {
-        public ClassFriends classFriends;
-
+        private readonly ClassFriends classFriends;
         public FriendPersistence()
         {
             classFriends = new ClassFriends();
@@ -62,18 +61,6 @@ namespace api_perfil.Persistence
 
             if (friends != null)
             {
-                var contact = new Contacts()
-                {
-                    Id = friends.Contacts.Id,
-                    Email = friends.Contacts.Email,
-                    Mobile = friends.Contacts.Mobile
-                };
-                var pictures = new Pictures()
-                {
-                    Id = friends.Picture.Id,
-                    Symbol = friends.Picture.Symbol,
-                    Path = friends.Picture.Path
-                };
                 var friend = new Friends()
                 {
                     Id = friends.Id,
@@ -81,8 +68,18 @@ namespace api_perfil.Persistence
                     LastName = friends.LastName,
                     Birthday = friends.Birthday,
                     Age = friends.Age,
-                    Picture = pictures,
-                    Contacts = contact,
+                    Picture = new Pictures()
+                    {
+                        Id = friends.Picture.Id,
+                        Symbol = friends.Picture.Symbol,
+                        Path = friends.Picture.Path
+                    },
+                    Contacts = new Contacts()
+                    {
+                        Id = friends.Contacts.Id,
+                        Email = friends.Contacts.Email,
+                        Mobile = friends.Contacts.Mobile
+                    },
                     CountryId = friends.CountryId
                 };
                 return friend;
@@ -93,19 +90,7 @@ namespace api_perfil.Persistence
             }
         }
         public void Post(Friends friends)
-        {
-            var contactDomain = new ContactsDomain()
-            {
-                Id = friends.Contacts.Id,
-                Email = friends.Contacts.Email,
-                Mobile = friends.Contacts.Mobile
-            };
-            var pictureDomain = new PicturesDomain()
-            {
-                Id = friends.Picture.Id,
-                Symbol = friends.Picture.Symbol,
-                Path = friends.Picture.Path
-            };
+        {   
             var friendsDomain = new FriendsDomain()
             {
                 Id = friends.Id,
@@ -113,27 +98,25 @@ namespace api_perfil.Persistence
                 LastName = friends.LastName,
                 Birthday = friends.Birthday,
                 Age = friends.Age,
-                Picture = pictureDomain,
-                Contacts = contactDomain,
+                Picture = new PicturesDomain()
+                {
+                    Id = friends.Picture.Id,
+                    Symbol = friends.Picture.Symbol,
+                    Path = friends.Picture.Path
+                },
+                Contacts = new ContactsDomain()
+                {
+                    Id = friends.Contacts.Id,
+                    Email = friends.Contacts.Email,
+                    Mobile = friends.Contacts.Mobile
+                },
                 CountryId = friends.CountryId
             };
 
             classFriends.Post(friendsDomain);
         }
         public void Put(Friends friends, int? Id)
-        {
-            var contactDomain = new ContactsDomain()
-            {
-                Id = friends.Contacts.Id,
-                Email = friends.Contacts.Email,
-                Mobile = friends.Contacts.Mobile
-            };
-            var pictureDomain = new PicturesDomain()
-            {
-                Id = friends.Picture.Id,
-                Symbol = friends.Picture.Symbol,
-                Path = friends.Picture.Path
-            };
+        {   
             var friendsDomain = new FriendsDomain()
             {
                 Id = friends.Id,
@@ -141,8 +124,18 @@ namespace api_perfil.Persistence
                 LastName = friends.LastName,
                 Birthday = friends.Birthday,
                 Age = friends.Age,
-                Picture = pictureDomain,
-                Contacts = contactDomain,
+                Picture = new PicturesDomain()
+                {
+                    Id = friends.Picture.Id,
+                    Symbol = friends.Picture.Symbol,
+                    Path = friends.Picture.Path
+                },
+                Contacts = new ContactsDomain()
+                {
+                    Id = friends.Contacts.Id,
+                    Email = friends.Contacts.Email,
+                    Mobile = friends.Contacts.Mobile
+                },
                 CountryId = friends.CountryId
             };
 

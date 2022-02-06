@@ -29,10 +29,10 @@ namespace web_viewer.Controllers
         }
 
         // GET: Person/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            //var listPerson = await clientPerson.Create();
-            return View(new PersonCountry());
+            var createPerson = await clientPerson.Create();
+            return View(createPerson);
         }
 
         // POST: Person/Create
