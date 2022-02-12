@@ -1,38 +1,38 @@
-﻿@model web_viewer.Models.Places.StatesCountries
+﻿@model web_viewer.Models.Places.StateCountry
 
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     
-    <div class="form-horizontal">
-        <h4>States</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.States.Id)
+<div class="form-horizontal">
+    <h4>States</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Id)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.States.Label, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.States.Label, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.States.Label, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.States.CountryId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.States.CountryId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.States.CountryId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Label, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Label, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Label, "", new { @class = "text-danger" })
         </div>
     </div>
+
+    <div class="form-group  rounded-pill">
+        @Html.LabelFor(model => model.CountryId, htmlAttributes: new { @class = "control-label col-md-2 mt-2  rounded-pill" })
+        <div class="col-md-12">
+            @Html.DropDownListFor(model => model.CountryId, Model.CountriesSelect, " ", new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.CountryId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-default" />
+        </div>
+    </div>
+</div>
 }
 
 <div>

@@ -54,7 +54,7 @@ namespace web_viewer.Controllers
         // GET: Person/Edit/5
         public async Task<ActionResult> Edit(int? Id)
         {
-            var getPerson = await clientPerson.Get(Id);
+            var getPerson = await clientPerson.Update(Id);
             return View(getPerson);
         }
 

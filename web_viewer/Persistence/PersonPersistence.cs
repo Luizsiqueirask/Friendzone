@@ -116,6 +116,55 @@ namespace web_viewer.Persistence
             }
             return new PersonCountry();
         }
+        public async Task<PersonCountry> Update(int? Id)
+        {
+            var people = await _clientPerson.GetPersonById(Id);
+            var allCountries = await _clientPerson.GetCountry();
+
+            if (people.IsSuccessStatusCode && allCountries.IsSuccessStatusCode)
+            {
+                var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
+                var person = await people.Content.ReadAsAsync<Person>();
+
+                var personCountry = new PersonCountry()
+                {   
+                    Id = person.Id,
+                    FirstName = person.FirstName,
+                    LastName = person.LastName,
+                    Birthday = person.Birthday,
+                    Age = person.Age,
+                    Picture = new Pictures
+                    {
+                        Id = person.Picture.Id,
+                        Symbol = person.Picture.Symbol,
+                        Path = person.Picture.Path
+                    },
+                    Contacts = new Contacts()
+                    {
+                        Id = person.Contacts.Id,
+                        Email = person.Contacts.Email,
+                        Mobile = person.Contacts.Mobile
+                    },
+                    CountryId = person.CountryId,
+                };
+            
+                var selectCountryList = new List<SelectListItem>();
+
+                foreach (var country in countries)
+                {
+                    var selectCountry = new SelectListItem()
+                    {
+                        Value = country.Id.ToString(),
+                        Text = country.Label,
+                        Selected = country.Id == personCountry.CountryId
+                    };
+                    selectCountryList.Add(selectCountry);
+                }
+                personCountry.CountrySelect = selectCountryList;
+                return personCountry;
+            }
+            return new PersonCountry();
+        }
         public async Task<Boolean> Post(Person person)
         {
             HttpFileCollectionBase requestFile = Request.Files;

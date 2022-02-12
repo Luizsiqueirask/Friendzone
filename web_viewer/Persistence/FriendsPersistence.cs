@@ -166,35 +166,55 @@ namespace web_viewer.Persistence
 
             return false;
         }
-        /*public async Task<FriendsCountry> Update()
+        public async Task<FriendsCountry> Update(int? Id)
         {
+            var friends = await _clientFriends.GetFriendsById(Id);
             var allCountries = await _clientFriends.GetCountry();
-            var allStates = await _clientFriends.GetStates();
-            var friendsCountry = new FriendsCountry();
 
-            if (allStates.IsSuccessStatusCode)
+            if (friends.IsSuccessStatusCode && allCountries.IsSuccessStatusCode)
             {
-                if (allCountries.IsSuccessStatusCode)
-                {
-                    var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
-                    var selectCountryList = new List<SelectListItem>();
+                var friend = await friends.Content.ReadAsAsync<Friends>();
+                var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
 
-                    foreach (var country in countries)
+                var friendsCountry = new FriendsCountry()
+                {
+                    Id = friend.Id,
+                    FirstName = friend.FirstName,
+                    LastName = friend.LastName,
+                    Birthday = friend.Birthday,
+                    Age = friend.Age,
+                    Picture = new Pictures()
                     {
-                        var selectCountry = new SelectListItem()
-                        {
-                            Value = country.Id.ToString(),
-                            Text = country.Label,
-                            Selected = country.Id == friendsCountry.CountryId
-                        };
-                        selectCountryList.Add(selectCountry);
-                    }
-                    friendsCountry.CountrySelect = selectCountryList;
+                        Id = friend.Picture.Id,
+                        Symbol = friend.Picture.Symbol,
+                        Path = friend.Picture.Path
+                    },
+                    Contacts = new Contacts()
+                    {
+                        Id = friend.Contacts.Id,
+                        Email = friend.Contacts.Email,
+                        Mobile = friend.Contacts.Mobile
+                    },
+                    CountryId = friend.CountryId
+                };
+
+                var selectCountryList = new List<SelectListItem>();
+
+                foreach (var country in countries)
+                {
+                    var selectCountry = new SelectListItem()
+                    {
+                        Value = country.Id.ToString(),
+                        Text = country.Label,
+                        Selected = country.Id == friendsCountry.CountryId
+                    };
+                    selectCountryList.Add(selectCountry);
                 }
+                friendsCountry.CountrySelect = selectCountryList;
                 return friendsCountry;
             }
             return new FriendsCountry();
-        }*/
+        }
         public async Task<Boolean> Put(Friends friends, int? Id)
         {
             HttpFileCollectionBase requestFile = Request.Files;
@@ -255,3 +275,4 @@ namespace web_viewer.Persistence
         }
     }
 }
+

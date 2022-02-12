@@ -53,10 +53,10 @@ namespace web_viewer.Controllers
         }
 
         // GET: States/Edit/5
-        public async Task<ActionResult> Edit(int Id)
+        public async Task<ActionResult> Edit(int? Id)
         {
-            var getStates = await clientStates.Get(Id);
-            return View(getStates);
+            var updateStates = await clientStates.Update(Id);
+            return View(updateStates);
         }
 
         // POST: States/Edit/5

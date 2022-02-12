@@ -108,7 +108,7 @@ namespace web_viewer.Persistence
                     };
                     selectCountryList.Add(selectCountry);
                 }
-                stateCountry.CountrySelect = selectCountryList;
+                stateCountry.CountriesSelect = selectCountryList;
                 return stateCountry;
             }
             return new StateCountry();
@@ -126,18 +126,20 @@ namespace web_viewer.Persistence
             var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
             await blobContainer.UploadFromStreamAsync(requestFile[0].InputStream);
 
-            var flag = new Flag()
-            {
-                Id = statesView.Flag.Id,
-                Symbol = blobContainer.Name.ToString(),
-                Path = blobContainer.Uri.AbsolutePath.ToString()
-            };
+            //statesView.Flag.Symbol = blobContainer.Name.ToString();
+            //statesView.Flag.Path = blobContainer.Uri.AbsolutePath.ToString();
+
             var states = new States()
             {
                 Id = statesView.Id,
                 Label = statesView.Label,
                 CountryId = statesView.CountryId,
-                Flag = flag
+                Flag = new Flag()
+                {
+                    Id = statesView.Flag.Id,
+                    Symbol = blobContainer.Name.ToString(),
+                    Path = blobContainer.Uri.AbsolutePath.ToString()
+                }
             };
 
             var postStates = await _clientStates.PostStates(states);
@@ -149,6 +151,45 @@ namespace web_viewer.Persistence
             }
 
             return false;
+        }
+        public async Task<StateCountry> Update(int? Id)
+        {
+            var states = await _clientStates.GetStatesById(Id);
+            var allCountries = await _clientStates.GetCountry();
+
+            if (states.IsSuccessStatusCode && allCountries.IsSuccessStatusCode)
+            {
+                var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
+                var state = await states.Content.ReadAsAsync<States>();
+
+                var stateCountry = new StateCountry() { 
+                    Id = state.Id,
+                    Label = state.Label,
+                    CountryId = state.CountryId,
+                    Flag = new Flag()
+                    {
+                        Id = state.Flag.Id,
+                        Symbol = state.Flag.Symbol,
+                        Path = state.Flag.Path
+                    }
+                };
+
+                var selectCountryList = new List<SelectListItem>();
+
+                foreach (var country in countries)
+                {
+                    var selectCountry = new SelectListItem()
+                    {
+                        Value = country.Id.ToString(),
+                        Text = country.Label,
+                        Selected = country.Id == stateCountry.CountryId
+                    };
+                    selectCountryList.Add(selectCountry);
+                }
+                stateCountry.CountriesSelect = selectCountryList;
+                return stateCountry;
+            }
+            return new StateCountry();
         }
         public async Task<Boolean> Put(States statesView, int? Id)
         {

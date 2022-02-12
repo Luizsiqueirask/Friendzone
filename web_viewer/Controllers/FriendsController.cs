@@ -54,7 +54,7 @@ namespace web_viewer.Controllers
         // GET: Friends/Edit/5
         public async Task<ActionResult> Edit(int? Id)
         {
-            var getFriends = await clientFriends.Get(Id);
+            var getFriends = await clientFriends.Update(Id);
             return View(getFriends);
         }
 

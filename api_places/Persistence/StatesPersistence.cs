@@ -52,18 +52,17 @@ namespace api_places.Persistence
             
             if (states != null)
             {
-                var flag = new Flag()
-                {
-                    Id = states.Flag.Id,
-                    Symbol = states.Flag.Symbol,
-                    Path = states.Flag.Path
-                };
                 var state = new States()
                 {
                     Id = states.Id,
                     Label = states.Label,
-                    CountryId = states.CountryId,
-                    Flag = flag
+                    Flag = new Flag()
+                    {
+                        Id = states.Flag.Id,
+                        Symbol = states.Flag.Symbol,
+                        Path = states.Flag.Path
+                    },
+                    CountryId = states.CountryId
                 };
                 return state;
             }
@@ -74,35 +73,33 @@ namespace api_places.Persistence
         }
         public void Post(States states)
         {
-            var flagDomain = new FlagDomain()
-            {
-                Id = states.Flag.Id,
-                Symbol = states.Flag.Symbol,
-                Path = states.Flag.Path
-            };
             var statesDomain = new StateDomain()
             {
                 Id = states.Id,
                 Label = states.Label,
-                Flag = flagDomain,
-                CountryId = states.CountryId,
+                Flag = new FlagDomain()
+                {
+                    Id = states.Flag.Id,
+                    Symbol = states.Flag.Symbol,
+                    Path = states.Flag.Path
+                },
+                CountryId = states.CountryId
             };
 
             classStates.Post(statesDomain);
         }
         public void Put(States states, int? Id)
         {
-            var flagDomain = new FlagDomain()
-            {
-                Id = states.Flag.Id,
-                Symbol = states.Flag.Symbol,
-                Path = states.Flag.Path
-            };
             var statesDomain = new StateDomain()
             {
                 Id = states.Id,
                 Label = states.Label,
-                Flag = flagDomain,
+                Flag = new FlagDomain()
+                {
+                    Id = states.Flag.Id,
+                    Symbol = states.Flag.Symbol,
+                    Path = states.Flag.Path
+                },
                 CountryId = states.CountryId,
             };
 

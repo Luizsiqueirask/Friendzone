@@ -5,56 +5,55 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.People.FirstName)
+            @Html.DisplayNameFor(model => model.FirstName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.People.FirstName)
+            @Html.DisplayFor(model => model.FirstName)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.People.LastName)
+            @Html.DisplayNameFor(model => model.LastName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.People.LastName)
+            @Html.DisplayFor(model => model.LastName)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.People.Age)
+            @Html.DisplayNameFor(model => model.Age)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.People.Age)
+            @Html.DisplayFor(model => model.Age)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.People.Birthday)
+            @Html.DisplayNameFor(model => model.Birthday)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.People.Birthday)
+            @Html.DisplayFor(model => model.Birthday)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.People.Contacts.Email)
+            @Html.DisplayNameFor(model => model.Contacts.Email)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.People.Contacts.Email)
+            @Html.DisplayFor(model => model.Contacts.Email)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Countries.Label)
+            @Html.DisplayNameFor(model => model.Picture.Path)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Countries.Label)
+            @Html.DisplayFor(model => model.Picture.Path)
         </dd>
-
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.People.Id }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

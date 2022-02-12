@@ -27,7 +27,7 @@ namespace web_viewer.Models.Places
         [Required(ErrorMessage = "Pais")]
         [DisplayName("Pais")]
         public int CountryId { get; set; }
-        public IEnumerable<SelectListItem> CountrySelect { get; set; }
+        public IEnumerable<SelectListItem> CountriesSelect { get; set; }
     }
 
     public class StatesCountries
