@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
@@ -9,10 +10,13 @@ using web_viewer.Models.Places;
 
 namespace web_viewer.Persistence
 {
+    // https://www.c-sharpcorner.com/forums/how-to-save-image-file-in-folder
+
     public class CountryPersistence : Controller
     {
         private readonly ApiClient _clientCountry;
         private readonly BlobClient _blobClient;
+        public HttpPostedFileBase httpPosted;
 
         public CountryPersistence()
         {
@@ -43,77 +47,160 @@ namespace web_viewer.Persistence
             }
             return new Country();
         }
-        public async Task<Boolean> Post(Country countryView)
+        public async Task<Country> Create()
         {
-            HttpFileCollectionBase requestFile = Request.Files;
-            int fileCount = requestFile.Count;
-
-            if (fileCount == 0) { return false; }
-
-            await _blobClient.SetupCloudBlob();
-
-            var getBlobName = _blobClient.GetRandomBlobName(requestFile[0].FileName);
-            var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
-            await blobContainer.UploadFromStreamAsync(requestFile[0].InputStream);
-
-            var flag = new Flag()
-            {
-                Id = countryView.Flag.Id,
-                Symbol = blobContainer.Name.ToString(),
-                Path = blobContainer.Uri.AbsolutePath.ToString()
-            };
-            var country = new Country()
-            {
-                Id = countryView.Id,
-                Label = countryView.Label,
-                Flag = flag
-            };
-
-            await _clientCountry.PostCountry(country);
-
-            return true;
+            return new Country();
         }
-        public async Task<Boolean> Put(Country country, int? Id)
+        public async Task<Boolean> Post(Country country, HttpPostedFileBase httpPosted)
         {
-            HttpFileCollectionBase requestFile = Request.Files;
-            int fileCount = requestFile.Count;
-
-            if (fileCount == 0) { return false; }
-
-            await _blobClient.SetupCloudBlob();
-
-            var getBlobName = _blobClient.GetRandomBlobName(requestFile[0].FileName);
-            var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
-            await blobContainer.UploadFromStreamAsync(requestFile[0].InputStream);
-
-            var flag = new Flag()
+            try
             {
-                Id = country.Flag.Id,
-                Symbol = blobContainer.Name.ToString(),
-                Path = blobContainer.Uri.AbsolutePath.ToString()
-            };
-            var newCountry = new Country()
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    await _blobClient.SetupCloudBlob();
+
+                    var getBlobName = _blobClient.GetRandomBlobName(httpPosted.FileName);
+                    var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
+                    await blobContainer.UploadFromStreamAsync(httpPosted.InputStream);
+
+                    country.Flag.Symbol = blobContainer.Name.ToString();
+                    country.Flag.Path = blobContainer.Uri.AbsolutePath.ToString();
+
+                    await _clientCountry.PostCountry(country);
+                    return true;
+                }
+                return false;
+            }
+            catch
             {
-                Id = country.Id,
-                Label = country.Label,
-                Flag = flag
-            };
+                var directoryPath = @"~/Images/Flags/Countries/";
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    var FlagName = Path.GetFileName(httpPosted.FileName);
+                    var FlagExt = Path.GetExtension(FlagName);
+                    if (FlagExt.Equals(".jpg") || FlagExt.Equals(".jpeg") || FlagExt.Equals(".png"))
+                    {
+                        var FlagPath = Path.Combine(Server.MapPath(directoryPath), FlagName);
 
-            await _clientCountry.PutCountry(newCountry, Id);
+                        country.Flag.Symbol = FlagName;
+                        country.Flag.Path = FlagPath;
 
-            return true;
+                        httpPosted.SaveAs(country.Flag.Path);
+                        await _clientCountry.PostCountry(country);
+                    }
+                    return true;
+                }
+                return false;
+            }
         }
-        public async Task<Boolean> Delete(int? Id)
+        public async Task<Country> Update(int? Id)
+        {
+            var countries = await _clientCountry.GetCountryById(Id);
+
+            if (countries.IsSuccessStatusCode)
+            {
+                var country = await countries.Content.ReadAsAsync<Country>();
+                return country;
+            }
+            return new Country();
+        }
+        public async Task<Boolean> Put(Country country, int? Id, HttpPostedFileBase httpPosted)
+        {
+            try
+            {
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    await _blobClient.SetupCloudBlob();
+
+                    var getBlobName = _blobClient.GetRandomBlobName(httpPosted.FileName);
+                    var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
+                    await blobContainer.UploadFromStreamAsync(httpPosted.InputStream);
+
+                    var _country = new Country()
+                    {
+                        Id = country.Id,
+                        Label = country.Label,
+                        Flag = new Flag()
+                        {
+                            Id = country.Id,
+                            Symbol = blobContainer.Name.ToString(),
+                            Path = blobContainer.Uri.AbsolutePath.ToString()
+                        }
+                    };
+                    await _clientCountry.PostCountry(_country);
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                var directoryPath = @"~/Friendzone/Library/Content/Flags/Countries/";
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    var FlagName = Path.GetFileName(httpPosted.FileName);
+                    var FlagExt = Path.GetExtension(FlagName);
+                    if (FlagExt.Equals(".jpg") || FlagExt.Equals(".jpeg") || FlagExt.Equals(".png"))
+                    {
+                        var FlagPath = Path.Combine(Server.MapPath(directoryPath), FlagName);
+
+                        var _country = new Country()
+                        {
+                            Id = country.Id,
+                            Label = country.Label,
+                            Flag = new Flag()
+                            {
+                                Id = country.Id,
+                                Symbol = FlagName,
+                                Path = FlagPath
+                            }
+                        };
+
+                        httpPosted.SaveAs(_country.Flag.Path);
+                        await _clientCountry.PostCountry(_country);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        }
+        public async Task<Country> Delete(int? Id)
         {
             var deleteCountry = await _clientCountry.DeleteCountry(Id);
 
-            if (deleteCountry.IsSuccessStatusCode)
+            try
             {
-                await deleteCountry.Content.ReadAsAsync<Country>();
-                return true;
+                Country country = new Country();
+
+                if (deleteCountry.IsSuccessStatusCode)
+                {
+                    await deleteCountry.Content.ReadAsAsync<Country>();
+                    return country;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"MSG: {ex.Message}");
             }
 
-            return false;
+            return new Country();
+        }
+        public async Task<Country> Delete(int? Id, Country country)
+        {
+            try
+            {
+                var deleteCountry = await _clientCountry.DeleteFriends(Id);
+
+                if (deleteCountry.IsSuccessStatusCode)
+                {
+                    await deleteCountry.Content.ReadAsAsync<Country>();
+                    return country;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"MSG: {ex.Message}");
+            }
+            return new Country();
         }
     }
 }

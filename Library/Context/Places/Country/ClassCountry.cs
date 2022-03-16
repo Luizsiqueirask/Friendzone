@@ -34,18 +34,16 @@ namespace Library.Context.Places.Country
                     {
                         if (dataReader.HasRows)
                         {
-                            var flagDomain = new FlagDomain()
-                            {
-                                Id = (int)dataReader["Id"],
-                                Symbol = dataReader["Symbol"].ToString(),
-                                Path = dataReader["Path"].ToString()
-                            };
-
                             var countryDomain = new CountryDomain()
                             {
                                 Id = (int)dataReader["Id"],
                                 Label = dataReader["Label"].ToString(),
-                                Flag = flagDomain
+                                Flag = new FlagDomain()
+                                {
+                                    Id = (int)dataReader["Id"],
+                                    Symbol = dataReader["Symbol"].ToString(),
+                                    Path = dataReader["Path"].ToString()
+                                }
                             };
 
                             allCountry.Add(countryDomain);
@@ -82,17 +80,16 @@ namespace Library.Context.Places.Country
 
                 while (dataReader.Read())
                 {
-                    var flagDomain = new FlagDomain()
-                    {
-                        Id = (int)dataReader["Id"],
-                        Symbol = dataReader["Symbol"].ToString(),
-                        Path = dataReader["Path"].ToString()
-                    };
                     countryDomain = new CountryDomain()
                     {
                         Id = (int)dataReader["Id"],
                         Label = dataReader["Label"].ToString(),
-                        Flag = flagDomain
+                        Flag = new FlagDomain()
+                        {
+                            Id = (int)dataReader["Id"],
+                            Symbol = dataReader["Symbol"].ToString(),
+                            Path = dataReader["Path"].ToString()
+                        }
                     };
                 }
             }
@@ -105,22 +102,20 @@ namespace Library.Context.Places.Country
                 try
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    // -- Country
-                    command.Parameters.AddWithValue("@Label", countryDomain.Label);
-                    command.Parameters.AddWithValue("@FlagId", countryDomain.Flag.Id);
+                    _sqlConnection.Open();
+
                     // -- Flag
                     command.Parameters.AddWithValue("@Symbol", countryDomain.Flag.Symbol);
                     command.Parameters.AddWithValue("@Path", countryDomain.Flag.Path);
+                    // -- Country
+                    command.Parameters.AddWithValue("@Label", countryDomain.Label);
+                    command.Parameters.AddWithValue("@FlagId", countryDomain.Flag.Id);
 
                     var running = command.ExecuteNonQuery();
                 }
                 catch (SqlException ex)
                 {
                     Console.WriteLine("SQLException: " + ex.Message);
-                    throw ex;
-                }
-                finally
-                {
                     _sqlConnection.Close();
                 }
             }

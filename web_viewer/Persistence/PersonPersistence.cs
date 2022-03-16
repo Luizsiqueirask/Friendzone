@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
@@ -39,7 +40,7 @@ namespace web_viewer.Persistence
                         foreach (var country in countries)
                         {
                             if (person.CountryId == country.Id)
-                            {   
+                            {
                                 // Together models from Person and Country
                                 var personCountries = new PersonCountries()
                                 {
@@ -54,11 +55,11 @@ namespace web_viewer.Persistence
                                     }
                                 };
                                 containerPersonCountry.Add(personCountries);
-                                return containerPersonCountry;
                             }
                         }
                     }
                 }
+                return containerPersonCountry;
             }
             return new List<PersonCountries>();
         }
@@ -116,6 +117,86 @@ namespace web_viewer.Persistence
             }
             return new PersonCountry();
         }
+        public async Task<Boolean> Post(Person person, HttpPostedFileBase httpPosted)
+        {
+            try
+            {
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    await _blobClient.SetupCloudBlob();
+
+                    var getBlobName = _blobClient.GetRandomBlobName(httpPosted.FileName);
+                    var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
+                    await blobContainer.UploadFromStreamAsync(httpPosted.InputStream);
+
+                    var _people = new Person()
+                    {
+                        Id = person.Id,
+                        FirstName = person.FirstName,
+                        LastName = person.LastName,
+                        Age = person.Age,
+                        Birthday = person.Birthday,
+                        Contacts = new Contacts()
+                        {
+                            Id = person.Contacts.Id,
+                            Email = person.Contacts.Email,
+                            Mobile = person.Contacts.Mobile
+                        },
+                        Picture = new Pictures()
+                        {
+                            Id = person.Picture.Id,
+                            Symbol = blobContainer.Name,
+                            Path = blobContainer.Uri.AbsolutePath,
+                        },
+                        CountryId = person.CountryId
+                    };
+
+                    await _clientPerson.PostPerson(_people);
+                    return true;
+                }
+                return false;
+            }
+            catch
+            {
+                var directoryPath = @"~/Images/Flags/People/";
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    var PicturesName = Path.GetFileName(httpPosted.FileName);
+                    var PicturesExt = Path.GetExtension(PicturesName);
+                    if (PicturesExt.Equals(".jpg") || PicturesExt.Equals(".jpeg") || PicturesExt.Equals(".png"))
+                    {
+                        var PicturesPath = Path.Combine(Server.MapPath(directoryPath), PicturesName);
+
+                        var _people = new Person()
+                        {
+                            Id = person.Id,
+                            FirstName = person.FirstName,
+                            LastName = person.LastName,
+                            Age = person.Age,
+                            Birthday = person.Birthday,
+                            Contacts = new Contacts()
+                            {
+                                Id = person.Contacts.Id,
+                                Email = person.Contacts.Email,
+                                Mobile = person.Contacts.Mobile
+                            },
+                            Picture = new Pictures()
+                            {
+                                Id = person.Picture.Id,
+                                Symbol = PicturesName,
+                                Path = PicturesPath,
+                            },
+                            CountryId = person.CountryId
+                        };
+
+                        httpPosted.SaveAs(_people.Picture.Path);
+                        await _clientPerson.PostPerson(_people);
+                    }
+                    return true;
+                }
+                return false;
+            }           
+        }
         public async Task<PersonCountry> Update(int? Id)
         {
             var people = await _clientPerson.GetPersonById(Id);
@@ -127,7 +208,7 @@ namespace web_viewer.Persistence
                 var person = await people.Content.ReadAsAsync<Person>();
 
                 var personCountry = new PersonCountry()
-                {   
+                {
                     Id = person.Id,
                     FirstName = person.FirstName,
                     LastName = person.LastName,
@@ -147,7 +228,7 @@ namespace web_viewer.Persistence
                     },
                     CountryId = person.CountryId,
                 };
-            
+
                 var selectCountryList = new List<SelectListItem>();
 
                 foreach (var country in countries)
@@ -165,109 +246,124 @@ namespace web_viewer.Persistence
             }
             return new PersonCountry();
         }
-        public async Task<Boolean> Post(Person person)
+        public async Task<Boolean> Put(Person person, int? Id, HttpPostedFileBase httpPosted)
         {
-            HttpFileCollectionBase requestFile = Request.Files;
-            int fileCount = requestFile.Count;
-
-            if (fileCount == 0) { return false; }
-
-            await _blobClient.SetupCloudBlob();
-
-            var getBlobName = _blobClient.GetRandomBlobName(requestFile[0].FileName);
-            var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
-            await blobContainer.UploadFromStreamAsync(requestFile[0].InputStream);
-
-            var picture = new Pictures()
+            try
             {
-                Id = person.Picture.Id,
-                Symbol = blobContainer.Name,
-                Path = blobContainer.Uri.AbsolutePath,
-            };
-            var contact = new Contacts()
-            {
-                Id = person.Contacts.Id,
-                Email = person.Contacts.Email,
-                Mobile = person.Contacts.Mobile
-            };
-            var people = new Person()
-            {
-                Id = person.Id,
-                FirstName = person.FirstName,
-                LastName = person.LastName,
-                Age = person.Age,
-                Birthday = person.Birthday,
-                Contacts = contact,
-                Picture = picture,
-                CountryId = person.CountryId
-            };
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    await _blobClient.SetupCloudBlob();
 
-            var _person = await _clientPerson.PostPerson(people);
+                    var getBlobName = _blobClient.GetRandomBlobName(httpPosted.FileName);
+                    var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
+                    await blobContainer.UploadFromStreamAsync(httpPosted.InputStream);
 
-            if (_person.IsSuccessStatusCode)
-            {
-                return true;
+                    var _people = new Person()
+                    {
+                        Id = person.Id,
+                        FirstName = person.FirstName,
+                        LastName = person.LastName,
+                        Age = person.Age,
+                        Birthday = person.Birthday,
+                        Contacts = new Contacts()
+                        {
+                            Id = person.Contacts.Id,
+                            Email = person.Contacts.Email,
+                            Mobile = person.Contacts.Mobile
+                        },
+                        Picture = new Pictures()
+                        {
+                            Id = person.Picture.Id,
+                            Symbol = blobContainer.Name,
+                            Path = blobContainer.Uri.AbsolutePath,
+                        },
+                        CountryId = person.CountryId
+                    };
+
+                    await _clientPerson.PostPerson(_people);
+                    return true;
+                }
+                return false;
             }
+            catch
+            {
+                var directoryPath = @"~/Images/Flags/Perple/";
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    var PicturesName = Path.GetFileName(httpPosted.FileName);
+                    var PicturesExt = Path.GetExtension(PicturesName);
+                    if (PicturesExt.Equals(".jpg") || PicturesExt.Equals(".jpeg") || PicturesExt.Equals(".png"))
+                    {
+                        var PicturesPath = Path.Combine(Server.MapPath(directoryPath), PicturesName);
 
-            return false;
+                        var _people = new Person()
+                        {
+                            Id = person.Id,
+                            FirstName = person.FirstName,
+                            LastName = person.LastName,
+                            Age = person.Age,
+                            Birthday = person.Birthday,
+                            Contacts = new Contacts()
+                            {
+                                Id = person.Contacts.Id,
+                                Email = person.Contacts.Email,
+                                Mobile = person.Contacts.Mobile
+                            },
+                            Picture = new Pictures()
+                            {
+                                Id = person.Picture.Id,
+                                Symbol = PicturesName,
+                                Path = PicturesPath,
+                            },
+                            CountryId = person.CountryId
+                        };
+
+                        httpPosted.SaveAs(_people.Picture.Path);
+                        await _clientPerson.PutPerson(_people, Id);
+                    }
+                    return true;
+                }
+                return false;
+            }
         }
-        public async Task<Boolean> Put(Person person, int? Id)
+        public async Task<Person> Delete(int? Id)
         {
-            HttpFileCollectionBase requestFile = Request.Files;
-            int fileCount = requestFile.Count;
+            var deletePerson = await _clientPerson.DeletPerson(Id);
 
-            if (fileCount == 0) { return false; }
-
-            await _blobClient.SetupCloudBlob();
-
-            var getBlobName = _blobClient.GetRandomBlobName(requestFile[0].FileName);
-            var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
-            await blobContainer.UploadFromStreamAsync(requestFile[0].InputStream);
-
-            var picture = new Pictures()
+            try
             {
-                Id = person.Picture.Id,
-                Symbol = blobContainer.Name,
-                Path = blobContainer.Uri.AbsolutePath,
-            };
-            var contact = new Contacts()
-            {
-                Id = person.Id,
-                Email = person.Contacts.Email,
-                Mobile = person.Contacts.Mobile
-            };
-            var people = new Person()
-            {
-                Id = person.Id,
-                FirstName = person.FirstName,
-                LastName = person.LastName,
-                Age = person.Age,
-                Birthday = person.Birthday,
-                Contacts = contact,
-                Picture = picture,
-                CountryId = person.CountryId
-            };
+                Person person = new Person();
 
-            var _person = await _clientPerson.PutPerson(people, Id);
-
-            if (_person.IsSuccessStatusCode)
+                if (deletePerson.IsSuccessStatusCode)
+                {
+                    await deletePerson.Content.ReadAsAsync<Friends>();
+                    return person;
+                }
+            }
+            catch (Exception ex)
             {
-                return true;
+                Console.WriteLine($"MSG: {ex.Message}");
             }
 
-            return false;
+            return new Person();
         }
-        public async Task<Boolean> Delete(int Id)
+        public async Task<Person> Delete(int? Id, Person person)
         {
-            var deleteFriends = await _clientPerson.DeletPerson(Id);
-
-            if (deleteFriends.IsSuccessStatusCode)
+            try
             {
-                await deleteFriends.Content.ReadAsAsync<Friends>();
-                return true;
-            }
+                var deletePerson = await _clientPerson.DeletPerson(Id);
 
-            return false;
+                if (deletePerson.IsSuccessStatusCode)
+                {
+                    await deletePerson.Content.ReadAsAsync<Person>();
+                    return person;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"MSG: {ex.Message}");
+            }
+            return new Person();
         }
     }
 }

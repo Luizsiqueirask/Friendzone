@@ -5,48 +5,111 @@
     Layout = "~/Views/Shared/_Layout_new.cshtml";
 }
 
-<h2>Person - View</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create", new { @class = "btn btn-info" } )
-</p>
-<table class="table">
+<table class="table table-dark table-striped">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.People.FirstName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Countries.Label)
+            @Html.DisplayNameFor(model => model.People.LastName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.People.Picture.Symbol)
+            @Html.DisplayNameFor(model => model.People.Contacts.Email)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.People.Contacts.Mobile)
         </th>
-        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.People.CountryId)
+        </th>
     </tr>
 
     @foreach (var item in Model)
     {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.People.FirstName)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Countries.Label)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.People.Picture.Symbol)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.People.Contacts.Mobile)
-    </td>
-    <td>
-        @Html.ActionLink("Edit", "Edit", new { id = item.People.Id }) |
-        @Html.ActionLink("Details", "Details", new { id = item.People.Id }) |
-        @Html.ActionLink("Delete", "Delete", new { id = item.People.Id })
-    </td>
-</tr>
-     }
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.People.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.People.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.People.Contacts.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.People.Contacts.Mobile)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Countries.Label)
+            </td>
+        </tr>
+    }
+
 </table>
+
+<div class="container-fluid">
+    <h3 class="text-center">All Friends</h3>
+    <p class="p-2">
+        @Html.ActionLink("Create New", "Create", new { area = "" }, new { @class = "btn btn-sm btn-success text-white" })
+    </p>
+    <hr />
+    @foreach (var item in Model)
+    {
+        <div class="">
+            <div class="card m-4 shadow-sm rounded-5">
+                <div class="card-header shadow-sm bg-white">
+                    <h2 class="h3 text-center m-4">@Html.DisplayFor(model => item.Countries.Label)</h2>
+                    <hr />
+                    <div class="card-body">
+                        <br />
+                        <figure class="card-img align-items-center mb-3 container-sm">
+                            <img src="@Url.Content(item.People.Picture.Symbol)" alt="Image" style="width: 360px; height: 270px;" class="img-thumbnail figure-img shadow-sm rounded-3 rounded-pill mb-5" />
+                            <h6 class="p text-nowrap p-2">@Html.DisplayFor(model => item.People.Picture.Symbol)</h6>
+                            <figure>
+                                <img src="@Url.Content(item.People.Picture.Path)" alt="Image" style="width: 80px; height: 80px;" class="img-thumbnail figure-img shadow-sm rounded-3 rounded-pill mb-5" />
+                            </figure>
+                        </figure>
+                        <div>
+                            <h5 class="h-50 mb-3 text-center">Pessoa</h5>
+                            <div class="card-body row m-3">
+                                <div class="col-md-6">
+                                    <p>
+                                        <b>@Html.DisplayNameFor(model => model.People.FirstName)</b>
+                                        @Html.DisplayFor(model => item.People.FirstName)
+                                        <br />
+                                        <b>@Html.DisplayNameFor(model => model.People.LastName):</b>
+                                        @Html.DisplayFor(model => item.People.LastName)
+                                        <br />
+                                        <b>@Html.DisplayNameFor(model => model.People.Birthday):</b>
+                                        @Html.DisplayFor(model => item.People.Birthday)
+                                        <br />
+                                        <b>@Html.DisplayNameFor(model => model.People.Age):</b>
+                                        @Html.DisplayFor(model => item.People.Age)
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>
+                                        <b>@Html.DisplayNameFor(model => model.People.Contacts.Email):</b>
+                                        @Html.DisplayFor(model => item.People.Contacts.Email)
+                                        <br />
+                                        <b>@Html.DisplayNameFor(model => model.People.Contacts.Mobile):</b>
+                                        @Html.DisplayFor(model => item.People.Contacts.Mobile)
+                                        <br />
+                                        <b>@Html.DisplayNameFor(model => model.Countries.Label):</b>
+                                        @Html.DisplayFor(model => item.Countries.Label)
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rounded">
+                            <div class="card-footer bg-gradient bg-light text-center rounded-pill">
+                                @Html.ActionLink("Edit", "Edit", new { id = item.People.Id }, new { @class = "btn btn-md btn-gradient btn-warning text-white rounded-pill" }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.People.Id }, new { @class = "btn btn-md btn-gradient btn-primary text-white rounded-pill" }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.People.Id }, new { @class = "btn btn-md btn-gradient btn-danger text-white rounded-pill" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }

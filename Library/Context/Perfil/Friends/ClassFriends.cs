@@ -1,5 +1,4 @@
 ﻿using Library.Models.Perfil;
-using Library.Models.Places;
 using System;
 using System.Collections.Generic;
 using System.Data;

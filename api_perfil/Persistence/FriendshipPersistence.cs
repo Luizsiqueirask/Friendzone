@@ -48,9 +48,10 @@ namespace api_perfil.Persistence
                     PersonId = getFriendship.PersonId,
                     FriendsId = getFriendship.FriendsId
                 };
+                return friendship;
             }
+            else { return null; }
 
-            return friendship;
         }
         public void Post(Friendship friendship)
         {

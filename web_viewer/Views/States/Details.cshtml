@@ -5,21 +5,30 @@
     Layout = "~/Views/Shared/_Layout_new.cshtml";
 }
 
-<h2>Details</h2>
-
-<div>
-    <h4>States</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <th>
-            @Html.DisplayNameFor(model => model.States.Label)
-        </th>
-        <th>
-            @Html.DisplayFor(model => model.States.Label)
-        </th>
-    </dl>
+<div class="container mt-5 mb-5">
+        <div class="row d-flex justify-content-center">
+        <div class="col-md-7">
+            <div class="card p-3 py-4">
+                <h4>View States</h4>
+                <hr />
+                <h2 class="text-center mt-2 mb-0">@Html.DisplayFor(model => model.Countries.Label)</h2> <span class="text-center">@Html.DisplayNameFor(model => model.Countries.Label)</span>
+                <figure class="text-center">
+                    <img src="@Url.Content(Model.Countries.Flag.Path)" width="100" class="rounded-pill figure-img">
+                </figure>
+                <div class="text-center mt-3">
+                    <figure class="text-center">
+                        <img src="@Url.Content(Model.States.Flag.Path)" width="100" class="rounded-pill figure-img">
+                    </figure>
+                    <div class="px-4 mt-1">
+                        <p><b>@Html.DisplayNameFor(model => model.States.Label):</b> @Html.DisplayFor(model => model.States.Label)</p>
+                    </div>
+                    <div class="buttons">
+                        @Html.ActionLink("Edit", "Edit", new { id = Model.States.Id }, new { @class = "btn btn-outline-warning px-4" })
+                        @Html.ActionLink("Delete", "Delete", new { id = Model.States.Id }, new { @class = "btn btn-outline-danger px-4" })
+                        @Html.ActionLink("Back to List", "Index", new { area = "" }, new { @class = "btn btn-outline-primary px-4" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.States.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>

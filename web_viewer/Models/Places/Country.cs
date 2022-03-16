@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
 
 namespace web_viewer.Models.Places
 {
@@ -10,7 +7,7 @@ namespace web_viewer.Models.Places
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "Informe o nome do pais")]
-        [DisplayName("Nome do pais")]
+        [DisplayName("Pais")]
         public string Label { get; set; }
         public Flag Flag { get; set; }
     }

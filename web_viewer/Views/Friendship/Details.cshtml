@@ -1,4 +1,4 @@
-﻿@model web_viewer.Models.Perfil.Friendship
+﻿@model web_viewer.Models.Perfil.PersonFriends
 
 @{
     ViewBag.Title = "Details";
@@ -12,24 +12,32 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Person)
+            @Html.DisplayNameFor(model => model.Person.FirstName)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Person)
+            @Html.DisplayFor(model => model.Person.FirstName)
         </dd>
+        
+            <dt>
+                @Html.DisplayNameFor(model => model.Friends.FirstName)
+            </dt>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Friends)
-        </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Friends.FirstName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Person.CountryId)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Friends)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Countries.Label)
+            </dd>
+        
 
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Person.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

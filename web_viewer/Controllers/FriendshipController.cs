@@ -17,22 +17,22 @@ namespace web_viewer.Controllers
         // GET: Friendship
         public async Task<ActionResult> Index()
         {
-            var listFriendship = await clientFriendship.List();
-            return View(listFriendship);
+            var friendship = await clientFriendship.List();
+            return View(friendship);
         }
 
         // GET: Friendship/Details/5
         public async Task<ActionResult> Details(int? Id)
         {
-            var getFriendship = await clientFriendship.Get(Id);
-            return View(getFriendship);
+            var friendship = await clientFriendship.Get(Id);
+            return View(friendship);
         }
 
         // GET: Friendship/Create
         public async Task<ActionResult> Create()
         {
-            var listFriendship = await clientFriendship.List();
-            return View(listFriendship);
+            var friendship = await clientFriendship.Create();
+            return View(friendship);
         }
 
         // POST: Friendship/Create
@@ -54,8 +54,8 @@ namespace web_viewer.Controllers
         // GET: Friendship/Edit/5
         public async Task<ActionResult> Edit(int? Id)
         {
-            var getFriendship = await clientFriendship.Get(Id);
-            return View(getFriendship);
+            var friendship = await clientFriendship.Get(Id);
+            return View(friendship);
         }
 
         // POST: Friendship/Edit/5
@@ -77,8 +77,8 @@ namespace web_viewer.Controllers
         // GET: Friendship/Delete/5
         public async Task<ActionResult> Delete(int? Id)
         {
-            var getFriendship = await clientFriendship.Get(Id);
-            return View(getFriendship);
+            var friendship = await clientFriendship.Delete(Id);
+            return View(friendship);
         }
 
         // POST: Friendship/Delete/5

@@ -5,49 +5,75 @@
     Layout = "~/Views/Shared/_Layout_new.cshtml";
 }
 
-<h2>States</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create", new { @class = "btn btn-info" })
-</p>
-<table class="table">
+<table class="table table-dark table-striped">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.States.Id)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Countries.Label)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Countries.Flag.Symbol)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.States.Label)
         </th>
-        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.Countries.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Countries.Label)
+        </th>
     </tr>
 
     @foreach (var item in Model)
     {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.States.Id)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Countries.Label)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Countries.Flag.Symbol)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.States.Label)
-    </td>
-    <td>
-        @Html.ActionLink("Edit", "Edit", new { id = item.States.Id }) |
-        @Html.ActionLink("Details", "Details", new { id = item.States.Id }) |
-        @Html.ActionLink("Delete", "Delete", new { id = item.States.Id })
-    </td>
-</tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.States.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.States.Label)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Countries.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Countries.Label)
+            </td>
+        </tr>
     }
 
 </table>
+
+<div class="container">
+    <h3 class="text-center">All States</h3>
+    <p>
+        @Html.ActionLink("Create New", "Create", new { area = "" }, new { @class = "btn btn-sm btn-success text-white" })
+    </p>
+    <hr />
+    @foreach (var item in Model)
+    {
+        <div class="">
+            <div class="card m-4 shadow-sm rounded-5">
+                <div class="card-header shadow-sm bg-white">
+                    <h2 class="h3 text-center">@Html.DisplayFor(model => item.Countries.Label)</h2>
+                    <hr />
+                    <div class="card-body">
+                        <br />
+                        <figure class="card-img align-items-center mb-3 container-sm">
+                            <img src="@Url.Content(item.Countries.Flag.Path)" alt="Image" style="width: 360px; height: 270px;" class="img-thumbnail figure-img shadow-sm rounded-3 rounded-pill mb-5" />
+                            <h6 class="p text-nowrap p-2">@Html.DisplayFor(model => item.States.Label)</h6>
+                            <figure>
+                                <img src="@Url.Content(item.States.Flag.Path)" alt="Image" style="width: 280px; height: 150px;" class="img-thumbnail figure-img shadow-sm rounded-3 rounded-pill mb-5" />
+                            </figure>
+                        </figure>
+                        <div class="rounded">
+                            <div class="card-footer bg-gradient bg-light text-center rounded-pill">
+                                @Html.ActionLink("Edit", "Edit", new { id = item.Countries.Id }, new { @class = "btn btn-md btn-gradient btn-warning text-white rounded-pill" }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.Countries.Id }, new { @class = "btn btn-md btn-gradient btn-primary text-white rounded-pill" }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.Countries.Id }, new { @class = "btn btn-md btn-gradient btn-danger text-white rounded-pill" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

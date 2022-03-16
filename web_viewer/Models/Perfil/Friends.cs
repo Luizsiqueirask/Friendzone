@@ -21,6 +21,8 @@ namespace web_viewer.Models.Perfil
         public int Age { get; set; }
         [Required(ErrorMessage = "Informe data de aniversário")]
         [DisplayName("Data de Aniversário")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true, HtmlEncode = true)]
         public DateTime Birthday { get; set; }
         [Required(ErrorMessage = "inseri uma foto")]
         [DisplayName("Foto")]
@@ -45,6 +47,8 @@ namespace web_viewer.Models.Perfil
         public int Age { get; set; }
         [Required(ErrorMessage = "Informe data de aniversário")]
         [DisplayName("Data de Aniversário")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true, HtmlEncode = true)]
         public DateTime Birthday { get; set; }
         [Required(ErrorMessage = "inseri uma foto")]
         [DisplayName("Foto")]

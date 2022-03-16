@@ -8,7 +8,7 @@ using web_viewer.Models.Places;
 namespace web_viewer.Models.Perfil
 {
     public class Person
-    {      
+    {
         public int Id { get; set; }
         [Required(ErrorMessage = "Informe nome")]
         [DisplayName("Nome")]
@@ -21,6 +21,8 @@ namespace web_viewer.Models.Perfil
         public int Age { get; set; }
         [Required(ErrorMessage = "Informe nome")]
         [DisplayName("Data de aniversário")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true, HtmlEncode = true)]
         public DateTime Birthday { get; set; }
         [Required(ErrorMessage = "inseri uma foto")]
         [DisplayName("Foto")]
@@ -45,6 +47,8 @@ namespace web_viewer.Models.Perfil
         public int Age { get; set; }
         [Required(ErrorMessage = "Informe nome")]
         [DisplayName("Data de aniversário")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true, HtmlEncode = true)]
         public DateTime Birthday { get; set; }
         [Required(ErrorMessage = "inseri uma foto")]
         [DisplayName("Foto")]

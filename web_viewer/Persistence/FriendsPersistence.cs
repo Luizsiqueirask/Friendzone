@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
@@ -14,7 +15,7 @@ namespace web_viewer.Persistence
     {
         private readonly ApiClient _clientFriends;
         private readonly BlobClient _blobClient;
-
+        private readonly HttpPostedFileBase postedFile;
         public FriendsPersistence()
         {
             _clientFriends = new ApiClient();
@@ -50,8 +51,7 @@ namespace web_viewer.Persistence
                                         Value = friend.Id.ToString(),
                                         Text = friend.FirstName,
                                         Selected = country.Id == friend.CountryId
-                                    }
-                                }
+                                    }}
                                 };
                                 containerFriendsCountries.Add(friendsCountries);
                             }
@@ -97,74 +97,105 @@ namespace web_viewer.Persistence
             var allStates = await _clientFriends.GetStates();
             var friendsCountry = new FriendsCountry();
 
-            if (allStates.IsSuccessStatusCode)
+            if (allCountries.IsSuccessStatusCode && allStates.IsSuccessStatusCode)
             {
-                if (allCountries.IsSuccessStatusCode)
-                {
-                    var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
-                    var selectCountryList = new List<SelectListItem>();
+                var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
+                var selectCountryList = new List<SelectListItem>();
 
-                    foreach (var country in countries)
+                foreach (var country in countries)
+                {
+                    var selectCountry = new SelectListItem()
                     {
-                        var selectCountry = new SelectListItem()
-                        {
-                            Value = country.Id.ToString(),
-                            Text = country.Label,
-                            Selected = country.Id == friendsCountry.CountryId
-                        };
-                        selectCountryList.Add(selectCountry);
-                    }
-                    friendsCountry.CountrySelect = selectCountryList;
+                        Value = country.Id.ToString(),
+                        Text = country.Label,
+                        Selected = country.Id == friendsCountry.CountryId
+                    };
+                    selectCountryList.Add(selectCountry);
                 }
+                friendsCountry.CountrySelect = selectCountryList;
                 return friendsCountry;
             }
             return new FriendsCountry();
         }
-        public async Task<Boolean> Post(Friends friends)
+        public async Task<Boolean> Post(Friends friends, HttpPostedFileBase httpPosted)
         {
-            HttpFileCollectionBase requestFile = Request.Files;
-            int fileCount = requestFile.Count;
-
-            if (fileCount == 0) { return false; }
-
-            await _blobClient.SetupCloudBlob();
-
-            var getBlobName = _blobClient.GetRandomBlobName(requestFile[0].FileName);
-            var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
-            await blobContainer.UploadFromStreamAsync(requestFile[0].InputStream);
-
-            var picture = new Pictures()
+            try
             {
-                Id = friends.Picture.Id,
-                Symbol = blobContainer.Name,
-                Path = blobContainer.Uri.AbsolutePath,
-            };
-            var contact = new Contacts()
-            {
-                Id = friends.Contacts.Id,
-                Email = friends.Contacts.Email,
-                Mobile = friends.Contacts.Mobile
-            };
-            var friend = new Friends()
-            {
-                Id = friends.Id,
-                FirstName = friends.FirstName,
-                LastName = friends.LastName,
-                Age = friends.Age,
-                Birthday = friends.Birthday,
-                Contacts = contact,
-                Picture = picture,
-                CountryId = friends.CountryId
-            };
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    await _blobClient.SetupCloudBlob();
 
-            var _friend = await _clientFriends.PostFriends(friend);
+                    var getBlobName = _blobClient.GetRandomBlobName(httpPosted.FileName);
+                    var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
+                    await blobContainer.UploadFromStreamAsync(httpPosted.InputStream);
 
-            if (_friend.IsSuccessStatusCode)
-            {
-                return true;
+                    var _friends = new Friends()
+                    {
+                        Id = friends.Id,
+                        FirstName = friends.FirstName,
+                        LastName = friends.LastName,
+                        Age = friends.Age,
+                        Birthday = friends.Birthday,
+                        Contacts = new Contacts()
+                        {
+                            Id = friends.Contacts.Id,
+                            Email = friends.Contacts.Email,
+                            Mobile = friends.Contacts.Mobile
+                        },
+                        Picture = new Pictures()
+                        {
+                            Id = friends.Picture.Id,
+                            Symbol = blobContainer.Name,
+                            Path = blobContainer.Uri.AbsolutePath,
+                        },
+                        CountryId = friends.CountryId
+                    };
+
+                    await _clientFriends.PostFriends(_friends);
+                    return true;
+                }
+                return false;
             }
+            catch
+            {
+                var directoryPath = @"~/Images/Flags/Friends/";
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    var PicturesName = Path.GetFileName(httpPosted.FileName);
+                    var PicturesExt = Path.GetExtension(PicturesName);
+                    if (PicturesExt.Equals(".jpg") || PicturesExt.Equals(".jpeg") || PicturesExt.Equals(".png"))
+                    {
+                        var PicturesPath = Path.Combine(Server.MapPath(directoryPath), PicturesName);
 
-            return false;
+                        var _friends = new Friends()
+                        {
+                            Id = friends.Id,
+                            FirstName = friends.FirstName,
+                            LastName = friends.LastName,
+                            Age = friends.Age,
+                            Birthday = friends.Birthday,
+                            Contacts = new Contacts()
+                            {
+                                Id = friends.Contacts.Id,
+                                Email = friends.Contacts.Email,
+                                Mobile = friends.Contacts.Mobile
+                            },
+                            Picture = new Pictures()
+                            {
+                                Id = friends.Picture.Id,
+                                Symbol = PicturesName,
+                                Path = PicturesPath,
+                            },
+                            CountryId = friends.CountryId
+                        };
+
+                        httpPosted.SaveAs(_friends.Picture.Path);
+                        await _clientFriends.PostFriends(_friends);
+                    }
+                    return true;
+                }
+                return false;
+            }
         }
         public async Task<FriendsCountry> Update(int? Id)
         {
@@ -173,8 +204,8 @@ namespace web_viewer.Persistence
 
             if (friends.IsSuccessStatusCode && allCountries.IsSuccessStatusCode)
             {
-                var friend = await friends.Content.ReadAsAsync<Friends>();
                 var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
+                var friend = await friends.Content.ReadAsAsync<Friends>();
 
                 var friendsCountry = new FriendsCountry()
                 {
@@ -215,64 +246,123 @@ namespace web_viewer.Persistence
             }
             return new FriendsCountry();
         }
-        public async Task<Boolean> Put(Friends friends, int? Id)
+        public async Task<Boolean> Put(Friends friends, int? Id, HttpPostedFileBase httpPosted)
         {
-            HttpFileCollectionBase requestFile = Request.Files;
-            int fileCount = requestFile.Count;
-
-            if (fileCount == 0) { return false; }
-
-            await _blobClient.SetupCloudBlob();
-
-            var getBlobName = _blobClient.GetRandomBlobName(requestFile[0].FileName);
-            var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
-            await blobContainer.UploadFromStreamAsync(requestFile[0].InputStream);
-
-            var picture = new Pictures()
+            try
             {
-                Id = friends.Picture.Id,
-                Symbol = blobContainer.Name,
-                Path = blobContainer.Uri.AbsolutePath,
-            };
-            var contact = new Contacts()
-            {
-                Id = friends.Contacts.Id,
-                Email = friends.Contacts.Email,
-                Mobile = friends.Contacts.Mobile
-            };
-            var _friends = new Friends()
-            {
-                Id = friends.Id,
-                FirstName = friends.FirstName,
-                LastName = friends.LastName,
-                Age = friends.Age,
-                Birthday = friends.Birthday,
-                Contacts = contact,
-                Picture = picture,
-                CountryId = friends.CountryId
-            };
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    await _blobClient.SetupCloudBlob();
 
-            var postFriendship = await _clientFriends.PutFriends(_friends, Id);
+                    var getBlobName = _blobClient.GetRandomBlobName(httpPosted.FileName);
+                    var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
+                    await blobContainer.UploadFromStreamAsync(httpPosted.InputStream);
 
-            if (postFriendship.IsSuccessStatusCode)
-            {
-                await postFriendship.Content.ReadAsAsync<Friendship>();
-                return true;
+                    var _friends = new Friends()
+                    {
+                        Id = friends.Id,
+                        FirstName = friends.FirstName,
+                        LastName = friends.LastName,
+                        Age = friends.Age,
+                        Birthday = friends.Birthday,
+                        Contacts = new Contacts()
+                        {
+                            Id = friends.Contacts.Id,
+                            Email = friends.Contacts.Email,
+                            Mobile = friends.Contacts.Mobile
+                        },
+                        Picture = new Pictures()
+                        {
+                            Id = friends.Picture.Id,
+                            Symbol = blobContainer.Name,
+                            Path = blobContainer.Uri.AbsolutePath,
+                        },
+                        CountryId = friends.CountryId
+                    };
+
+                    await _clientFriends.PostFriends(_friends);
+                    return true;
+                }
+                return false;
             }
+            catch
+            {
+                var directoryPath = @"~/Images/Flags/Friends/";
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    var PicturesName = Path.GetFileName(httpPosted.FileName);
+                    var PicturesExt = Path.GetExtension(PicturesName);
+                    if (PicturesExt.Equals(".jpg") || PicturesExt.Equals(".jpeg") || PicturesExt.Equals(".png"))
+                    {
+                        var PicturesPath = Path.Combine(Server.MapPath(directoryPath), PicturesName);
 
-            return false;
+                        var _friends = new Friends()
+                        {
+                            Id = friends.Id,
+                            FirstName = friends.FirstName,
+                            LastName = friends.LastName,
+                            Age = friends.Age,
+                            Birthday = friends.Birthday,
+                            Contacts = new Contacts()
+                            {
+                                Id = friends.Contacts.Id,
+                                Email = friends.Contacts.Email,
+                                Mobile = friends.Contacts.Mobile
+                            },
+                            Picture = new Pictures()
+                            {
+                                Id = friends.Picture.Id,
+                                Symbol = PicturesName,
+                                Path = PicturesPath,
+                            },
+                            CountryId = friends.CountryId
+                        };
+
+                        httpPosted.SaveAs(_friends.Picture.Path);
+                        await _clientFriends.PutFriends(_friends, Id);
+                    }
+                    return true;
+                }
+                return false;
+            }
         }
-        public async Task<Boolean> Delete(int? Id)
+        public async Task<Friends> Delete(int? Id)
         {
             var deleteFriends = await _clientFriends.DeleteFriends(Id);
 
-            if (deleteFriends.IsSuccessStatusCode)
+            try
             {
-                await deleteFriends.Content.ReadAsAsync<Friends>();
-                return true;
+                Friends friends = new Friends();
+
+                if (deleteFriends.IsSuccessStatusCode)
+                {
+                    await deleteFriends.Content.ReadAsAsync<Friends>();
+                    return friends;
+                }
             }
-            return false;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"MSG: {ex.Message}");
+            }
+            return new Friends();
+        }
+        public async Task<Friends> Delete(int? Id, Friends friends)
+        {
+            try
+            {
+                var deleteFriends = await _clientFriends.DeleteFriends(Id);
+
+                if (deleteFriends.IsSuccessStatusCode)
+                {
+                    await deleteFriends.Content.ReadAsAsync<Friends>();
+                    return friends;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"MSG: {ex.Message}");
+            }
+            return new Friends();
         }
     }
 }
-

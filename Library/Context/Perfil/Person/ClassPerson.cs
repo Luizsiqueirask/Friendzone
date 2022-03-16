@@ -1,5 +1,4 @@
 ﻿using Library.Models.Perfil;
-using Library.Models.Places;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -34,7 +33,7 @@ namespace Library.Context.Perfil.Person
                     while (dataReader.Read())
                     {
                         if (dataReader.HasRows)
-                        {   
+                        {
                             var personDomain = new PersonDomain()
                             {
                                 Id = (int)dataReader["Id"],

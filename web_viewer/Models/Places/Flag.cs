@@ -1,6 +1,6 @@
-﻿
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Web;
 
 namespace web_viewer.Models.Places
 {
@@ -10,7 +10,7 @@ namespace web_viewer.Models.Places
         [Required(ErrorMessage = "Informe nome da bandeira")]
         [DisplayName("Nome do baneira")]
         public string Symbol { get; set; }
-        [DisplayName("Local do arquivo")]
+        [DisplayName("Bandeira")]
         public string Path { get; set; }
     }
 }

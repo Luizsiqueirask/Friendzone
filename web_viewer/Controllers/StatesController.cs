@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using web_viewer.Models.Places;
 using web_viewer.Persistence;
@@ -18,32 +18,32 @@ namespace web_viewer.Controllers
         // GET: States
         public async Task<ActionResult> Index()
         {
-            var allStates = await clientStates.List();
-            return View(allStates);
+            var states = await clientStates.List();
+            return View(states);
         }
 
         // GET: States/Details/5
         public async Task<ActionResult> Details(int Id)
         {
-            var getStates = await clientStates.Get(Id);
-            return View(getStates);
+            var states = await clientStates.Get(Id);
+            return View(states);
         }
 
         // GET: States/Create
         public async Task<ActionResult> Create()
         {
-            var listStates = await clientStates.Create();
-            return View(listStates);
+            var states = await clientStates.Create();
+            return View(states);
         }
 
         // POST: States/Create
         [HttpPost]
-        public async Task<ActionResult> Create(States states)
+        public async Task<ActionResult> Create(States states, HttpPostedFileBase httpPosted)
         {
             try
             {
                 // TODO: Add insert logic here
-                await clientStates.Post(states);
+                await clientStates.Post(states, httpPosted);
                 return RedirectToAction("Index");
             }
             catch
@@ -55,18 +55,18 @@ namespace web_viewer.Controllers
         // GET: States/Edit/5
         public async Task<ActionResult> Edit(int? Id)
         {
-            var updateStates = await clientStates.Update(Id);
-            return View(updateStates);
+            var states = await clientStates.Update(Id);
+            return View(states);
         }
 
         // POST: States/Edit/5
         [HttpPost]
-        public async Task<ActionResult> Edit(int Id, States states)
+        public async Task<ActionResult> Edit(int Id, States states, HttpPostedFileBase httpPosted)
         {
             try
             {
                 // TODO: Add update logic here
-                await clientStates.Put(states, Id);
+                await clientStates.Put(states, Id, httpPosted);
                 return RedirectToAction("Index");
             }
             catch
@@ -78,18 +78,18 @@ namespace web_viewer.Controllers
         // GET: States/Delete/5
         public async Task<ActionResult> Delete(int? Id)
         {
-            var getStates = await clientStates.Get(Id);
-            return View(getStates);
+            var states = await clientStates.Delete(Id);
+            return View(states);
         }
 
         // POST: States/Delete/5
         [HttpPost]
-        public async Task<ActionResult> Delete(int Id)
+        public async Task<ActionResult> Delete(int? Id, States states)
         {
             try
             {
                 // TODO: Add delete logic here
-                await clientStates.Delete(Id);
+                await clientStates.Delete(Id, states);
                 return RedirectToAction("Index");
             }
             catch

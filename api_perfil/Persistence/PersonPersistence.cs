@@ -22,18 +22,6 @@ namespace api_perfil.Persistence
             {
                 foreach (var people in allPerson)
                 {
-                    var contact = new Contacts()
-                    {
-                        Id = people.Contacts.Id,
-                        Email = people.Contacts.Email,
-                        Mobile = people.Contacts.Mobile
-                    };
-                    var picture = new Pictures()
-                    {
-                        Id = people.Picture.Id,
-                        Symbol = people.Picture.Symbol,
-                        Path = people.Picture.Path
-                    };
                     var person = new Person()
                     {
                         Id = people.Id,
@@ -42,8 +30,18 @@ namespace api_perfil.Persistence
                         Age = people.Age,
                         Birthday = people.Birthday,
                         CountryId = people.CountryId,
-                        Picture = picture,
-                        Contacts = contact
+                        Picture = new Pictures()
+                        {
+                            Id = people.Picture.Id,
+                            Symbol = people.Picture.Symbol,
+                            Path = people.Picture.Path
+                        },
+                        Contacts = new Contacts()
+                        {
+                            Id = people.Contacts.Id,
+                            Email = people.Contacts.Email,
+                            Mobile = people.Contacts.Mobile
+                        }
                     };
 
                     listPersonApi.Add(person);
@@ -62,18 +60,6 @@ namespace api_perfil.Persistence
 
             if (people != null)
             {
-                var contact = new Contacts()
-                {
-                    Id = people.Contacts.Id,
-                    Email = people.Contacts.Email,
-                    Mobile = people.Contacts.Mobile
-                };
-                var picture = new Pictures()
-                {
-                    Id = people.Picture.Id,
-                    Symbol = people.Picture.Symbol,
-                    Path = people.Picture.Path
-                };
                 var person = new Person()
                 {
                     Id = people.Id,
@@ -81,8 +67,18 @@ namespace api_perfil.Persistence
                     LastName = people.LastName,
                     Birthday = people.Birthday,
                     Age = people.Age,
-                    Picture = picture,
-                    Contacts = contact,
+                    Picture = new Pictures()
+                    {
+                        Id = people.Picture.Id,
+                        Symbol = people.Picture.Symbol,
+                        Path = people.Picture.Path
+                    },
+                    Contacts = new Contacts()
+                    {
+                        Id = people.Contacts.Id,
+                        Email = people.Contacts.Email,
+                        Mobile = people.Contacts.Mobile
+                    },
                     CountryId = people.CountryId
 
                 };
@@ -95,18 +91,6 @@ namespace api_perfil.Persistence
         }
         public void Post(Person person)
         {
-            var contactDomain = new ContactsDomain()
-            {
-                Id = person.Contacts.Id,
-                Email = person.Contacts.Email,
-                Mobile = person.Contacts.Mobile
-            };
-            var picturesDomain = new PicturesDomain()
-            {
-                Id = person.Picture.Id,
-                Symbol = person.Picture.Symbol,
-                Path = person.Picture.Path
-            };
             var personDomain = new PersonDomain()
             {
                 Id = person.Id,
@@ -115,26 +99,24 @@ namespace api_perfil.Persistence
                 Birthday = person.Birthday,
                 Age = person.Age,
                 CountryId = person.CountryId,
-                Picture = picturesDomain,
-                Contacts = contactDomain,
+                Picture = new PicturesDomain()
+                {
+                    Id = person.Picture.Id,
+                    Symbol = person.Picture.Symbol,
+                    Path = person.Picture.Path
+                },
+                Contacts = new ContactsDomain()
+                {
+                    Id = person.Contacts.Id,
+                    Email = person.Contacts.Email,
+                    Mobile = person.Contacts.Mobile
+                },
             };
 
             classPerson.Post(personDomain);
         }
         public void Put(Person person, int? Id)
         {
-            var contactDomain = new ContactsDomain()
-            {
-                Id = person.Contacts.Id,
-                Email = person.Contacts.Email,
-                Mobile = person.Contacts.Mobile
-            };
-            var picturesDomain = new PicturesDomain()
-            {
-                Id = person.Picture.Id,
-                Symbol = person.Picture.Symbol,
-                Path = person.Picture.Path
-            };
             var personDomain = new PersonDomain()
             {
                 Id = person.Id,
@@ -143,8 +125,18 @@ namespace api_perfil.Persistence
                 Birthday = person.Birthday,
                 Age = person.Age,
                 CountryId = person.CountryId,
-                Picture = picturesDomain,
-                Contacts = contactDomain,
+                Picture = new PicturesDomain()
+                {
+                    Id = person.Picture.Id,
+                    Symbol = person.Picture.Symbol,
+                    Path = person.Picture.Path
+                },
+                Contacts = new ContactsDomain()
+                {
+                    Id = person.Contacts.Id,
+                    Email = person.Contacts.Email,
+                    Mobile = person.Contacts.Mobile
+                },
             };
 
             classPerson.Put(personDomain, Id);

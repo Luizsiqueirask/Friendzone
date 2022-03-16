@@ -90,7 +90,7 @@ namespace api_perfil.Persistence
             }
         }
         public void Post(Friends friends)
-        {   
+        {
             var friendsDomain = new FriendsDomain()
             {
                 Id = friends.Id,
@@ -116,7 +116,7 @@ namespace api_perfil.Persistence
             classFriends.Post(friendsDomain);
         }
         public void Put(Friends friends, int? Id)
-        {   
+        {
             var friendsDomain = new FriendsDomain()
             {
                 Id = friends.Id,

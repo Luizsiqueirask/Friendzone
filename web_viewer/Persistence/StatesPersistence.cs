@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
@@ -14,6 +14,7 @@ namespace web_viewer.Persistence
     {
         private readonly ApiClient _clientStates;
         private readonly BlobClient _blobClient;
+        private readonly HttpPostedFileBase httpPosted;
 
         public StatesPersistence()
         {
@@ -53,9 +54,9 @@ namespace web_viewer.Persistence
                             };
                             containerStatesCountries.Add(statesCountries);
                         }
+                        return containerStatesCountries;
                     }
-                }               
-                return containerStatesCountries;
+                }
             }
             return new List<StatesCountries>();
         }
@@ -88,14 +89,14 @@ namespace web_viewer.Persistence
             }
             return new StatesCountries();
         }
-        public async Task<StateCountry> Create()
+        public async Task<States> Create()
         {
             var allCountries = await _clientStates.GetCountry();
 
             if (allCountries.IsSuccessStatusCode)
             {
                 var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
-                var stateCountry = new StateCountry();
+                var stateCountry = new States();
                 var selectCountryList = new List<SelectListItem>();
 
                 foreach (var country in countries)
@@ -104,53 +105,75 @@ namespace web_viewer.Persistence
                     {
                         Value = country.Id.ToString(),
                         Text = country.Label,
-                        Selected = country.Id == stateCountry.CountryId
+                        Selected = stateCountry.CountryId == country.Id
                     };
                     selectCountryList.Add(selectCountry);
+                    stateCountry.CountriesSelect = selectCountryList;
                 }
-                stateCountry.CountriesSelect = selectCountryList;
                 return stateCountry;
             }
-            return new StateCountry();
+            return new States();
         }
-        public async Task<Boolean> Post(States statesView)
+        public async Task<Boolean> Post(States states, HttpPostedFileBase httpPosted)
         {
-            HttpFileCollectionBase requestFile = Request.Files;
-            int fileCount = requestFile.Count;
-
-            if (fileCount == 0) { return false; }
-
-            await _blobClient.SetupCloudBlob();
-
-            var getBlobName = _blobClient.GetRandomBlobName(requestFile[0].FileName);
-            var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
-            await blobContainer.UploadFromStreamAsync(requestFile[0].InputStream);
-
-            //statesView.Flag.Symbol = blobContainer.Name.ToString();
-            //statesView.Flag.Path = blobContainer.Uri.AbsolutePath.ToString();
-
-            var states = new States()
+            try
             {
-                Id = statesView.Id,
-                Label = statesView.Label,
-                CountryId = statesView.CountryId,
-                Flag = new Flag()
+                if (httpPosted != null && httpPosted.ContentLength > 0)
                 {
-                    Id = statesView.Flag.Id,
-                    Symbol = blobContainer.Name.ToString(),
-                    Path = blobContainer.Uri.AbsolutePath.ToString()
+                    await _blobClient.SetupCloudBlob();
+
+                    var getBlobName = _blobClient.GetRandomBlobName(httpPosted.FileName);
+                    var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
+                    await blobContainer.UploadFromStreamAsync(httpPosted.InputStream);
+
+                    var _states = new States()
+                    {
+                        Id = states.Id,
+                        Label = states.Label,
+                        CountryId = states.CountryId,
+                        Flag = new Flag()
+                        {
+                            Id = states.Flag.Id,
+                            Symbol = blobContainer.Name.ToString(),
+                            Path = blobContainer.Uri.AbsolutePath.ToString()
+                        }
+                    };
+
+                    await _clientStates.PostStates(_states);
+                    return true;
                 }
-            };
-
-            var postStates = await _clientStates.PostStates(states);
-
-            if (postStates.IsSuccessStatusCode)
-            {
-                await postStates.Content.ReadAsAsync<States>();
-                return true;
+                return false;
             }
+            catch
+            {
+                var directoryPath = @"~/Images/Flags/States/";
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    var FlagName = Path.GetFileName(httpPosted.FileName);
+                    var FlagExt = Path.GetExtension(FlagName);
+                    if (FlagExt.Equals(".jpg") || FlagExt.Equals(".jpeg") || FlagExt.Equals(".png"))
+                    {
+                        var FlagPath = Path.Combine(Server.MapPath(directoryPath), FlagName);
 
-            return false;
+                        var _states = new States()
+                        {
+                            Id = states.Id,
+                            Label = states.Label,
+                            Flag = new Flag()
+                            {
+                                Id = states.Flag.Id,
+                                Symbol = FlagName,
+                                Path = FlagPath
+                            }
+                        };
+
+                        httpPosted.SaveAs(_states.Flag.Path);
+                        await _clientStates.PostStates(_states);
+                    }
+                    return true;
+                }
+                return false;
+            }              
         }
         public async Task<StateCountry> Update(int? Id)
         {
@@ -162,7 +185,8 @@ namespace web_viewer.Persistence
                 var countries = await allCountries.Content.ReadAsAsync<IEnumerable<Country>>();
                 var state = await states.Content.ReadAsAsync<States>();
 
-                var stateCountry = new StateCountry() { 
+                var stateCountry = new StateCountry()
+                {
                     Id = state.Id,
                     Label = state.Label,
                     CountryId = state.CountryId,
@@ -191,44 +215,66 @@ namespace web_viewer.Persistence
             }
             return new StateCountry();
         }
-        public async Task<Boolean> Put(States statesView, int? Id)
+        public async Task<Boolean> Put(States states, int? Id, HttpPostedFileBase httpPosted)
         {
-            HttpFileCollectionBase requestFile = Request.Files;
-            int fileCount = requestFile.Count;
-
-            if (fileCount == 0) { return false; }
-
-            await _blobClient.SetupCloudBlob();
-
-            var getBlobName = _blobClient.GetRandomBlobName(requestFile[0].FileName);
-            var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
-            await blobContainer.UploadFromStreamAsync(requestFile[0].InputStream);
-
-            var flag = new Flag()
+            try
             {
-                Id = statesView.Flag.Id,
-                Symbol = blobContainer.Name.ToString(),
-                Path = blobContainer.Uri.AbsolutePath.ToString()
-            };
-            var states = new States()
-            {
-                Id = statesView.Id,
-                Label = statesView.Label,
-                CountryId = statesView.CountryId,
-                Flag = flag
-            };
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    await _blobClient.SetupCloudBlob();
 
-            await _clientStates.PutStates(states, Id);
+                    var getBlobName = _blobClient.GetRandomBlobName(httpPosted.FileName);
+                    var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
+                    await blobContainer.UploadFromStreamAsync(httpPosted.InputStream);
 
-            var putStates = await _clientStates.PostStates(states);
+                    var _states = new States()
+                    {
+                        Id = states.Id,
+                        Label = states.Label,
+                        CountryId = states.CountryId,
+                        Flag = new Flag()
+                        {
+                            Id = states.Flag.Id,
+                            Symbol = blobContainer.Name.ToString(),
+                            Path = blobContainer.Uri.AbsolutePath.ToString()
+                        }
+                    };
 
-            if (putStates.IsSuccessStatusCode)
-            {
-                await putStates.Content.ReadAsAsync<States>();
-                return true;
+                    await _clientStates.PutStates(_states, Id);
+                    return true;
+                }
+                return false;
             }
+            catch
+            {
+                var directoryPath = @"~/Images/Flags/States/";
+                if (httpPosted != null && httpPosted.ContentLength > 0)
+                {
+                    var FlagName = Path.GetFileName(httpPosted.FileName);
+                    var FlagExt = Path.GetExtension(FlagName);
+                    if (FlagExt.Equals(".jpg") || FlagExt.Equals(".jpeg") || FlagExt.Equals(".png"))
+                    {
+                        var FlagPath = Path.Combine(Server.MapPath(directoryPath), FlagName);
 
-            return false;
+                        var _states = new States()
+                        {
+                            Id = states.Id,
+                            Label = states.Label,
+                            Flag = new Flag()
+                            {
+                                Id = states.Flag.Id,
+                                Symbol = FlagName,
+                                Path = FlagPath
+                            }
+                        };
+
+                        httpPosted.SaveAs(_states.Flag.Path);
+                        await _clientStates.PutStates(_states, Id);
+                    }
+                    return true;
+                }
+                return false;
+            }
         }
         public async Task<States> Delete(int? Id)
         {
@@ -249,6 +295,24 @@ namespace web_viewer.Persistence
                 Console.WriteLine($"MSG: {ex.Message}");
             }
 
+            return new States();
+        }
+        public async Task<States> Delete(int? Id, States states)
+        {
+            try
+            {
+                var deleteStates = await _clientStates.DeleteStates(Id);
+
+                if (deleteStates.IsSuccessStatusCode)
+                {
+                    await deleteStates.Content.ReadAsAsync<States>();
+                    return states;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"MSG: {ex.Message}");
+            }
             return new States();
         }
     }

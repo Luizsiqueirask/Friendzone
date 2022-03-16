@@ -49,7 +49,7 @@ namespace api_places.Persistence
         public States Get(int? Id)
         {
             var states = classStates.Get(Id);
-            
+
             if (states != null)
             {
                 var state = new States()

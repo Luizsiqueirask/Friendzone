@@ -13,6 +13,9 @@ namespace web_viewer
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                        "~/Scripts/jquery.validate*"));
 
+            bundles.Add(new ScriptBundle("~/bundles/friendzone/js").Include(
+                       "~/Scripts/friendzone.js"));
+
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
@@ -23,7 +26,10 @@ namespace web_viewer
 
             bundles.Add(new StyleBundle("~/Content/css")
                 .Include("~/Content/bootstrap.min.css")
-                .Include("~/Content/Site.css"));
+                .Include("~/Content/Site.css")
+                .Include("~/Content/friendzone.css"));
+
+            BundleTable.EnableOptimizations = true;
         }
     }
 }

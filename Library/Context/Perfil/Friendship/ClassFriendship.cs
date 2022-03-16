@@ -63,7 +63,7 @@ namespace Library.Context.Perfil.Friends
             using (SqlCommand command = new SqlCommand("GetFriendship", _sqlConnection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@IdPerson", friendshipDomain.PersonId).Equals(Id);
+                command.Parameters.AddWithValue("@IdPerson", Id);
                 _sqlConnection.Open();
                 SqlDataReader dataReader = command.ExecuteReader();
 
@@ -89,8 +89,8 @@ namespace Library.Context.Perfil.Friends
                 {
                     var friend = new FriendsDomain();
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@PersonId", friendshipDomain.PersonId);
-                    command.Parameters.AddWithValue("@FriendsId", friendshipDomain.FriendsId);
+                    command.Parameters.AddWithValue("@IdPerson", friendshipDomain.PersonId);
+                    command.Parameters.AddWithValue("@IdFriend", friendshipDomain.FriendsId);
 
                     _sqlConnection.Open();
                     var running = command.ExecuteNonQuery();
@@ -108,7 +108,7 @@ namespace Library.Context.Perfil.Friends
             {
                 var friend = new FriendsDomain();
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@PersonId", friendshipDomain.PersonId.Equals(Id));
+                command.Parameters.AddWithValue("@PersonId", Id);
                 command.Parameters.AddWithValue("@FriendsId", friendshipDomain.FriendsId);
 
                 _sqlConnection.Open();
@@ -123,7 +123,7 @@ namespace Library.Context.Perfil.Friends
             using (SqlCommand command = new SqlCommand("DeleteFriendship", _sqlConnection))
             {
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@IdPerson", friendshipDomain.PersonId.Equals(Id));
+                command.Parameters.AddWithValue("@IdPerson", Id);
 
                 _sqlConnection.Open();
                 var running = command.ExecuteNonQuery();

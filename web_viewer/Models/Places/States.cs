@@ -10,12 +10,13 @@ namespace web_viewer.Models.Places
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "Informe nome do estado")]
-        [DisplayName("Nome do estado")]
+        [DisplayName("Estado")]
         public string Label { get; set; }
         public Flag Flag { get; set; }
         [Required(ErrorMessage = "Pais")]
         [DisplayName("Pais")]
         public int CountryId { get; set; }
+        public IEnumerable<SelectListItem> CountriesSelect { get; set; }
     }
     public class StateCountry
     {

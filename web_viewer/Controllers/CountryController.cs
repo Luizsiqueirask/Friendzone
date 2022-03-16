@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using web_viewer.Models.Places;
 using web_viewer.Persistence;
@@ -8,7 +11,6 @@ namespace web_viewer.Controllers
     public class CountryController : Controller
     {
         public readonly CountryPersistence clientCountry;
-
         public CountryController()
         {
             clientCountry = new CountryPersistence();
@@ -17,32 +19,32 @@ namespace web_viewer.Controllers
         // GET: Country
         public async Task<ActionResult> Index()
         {
-            var listCountry = await clientCountry.List();
-            return View(listCountry);
+            var country = await clientCountry.List();
+            return View(country);
         }
 
         // GET: Country/Details/5
         public async Task<ActionResult> Details(int? Id)
         {
-            var getCountry = await clientCountry.Get(Id);
-            return View(getCountry);
+            var country = await clientCountry.Get(Id);
+            return View(country);
         }
 
         // GET: Country/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            //var listCountry = await clientCountry.List();
-            return View(new Country());
+            var country = await clientCountry.Create();
+            return View(country);
         }
 
         // POST: Country/Create
         [HttpPost]
-        public async Task<ActionResult> Create(Country country)
+        public async Task<ActionResult> Create(Country country, HttpPostedFileBase httpPosted)
         {
             try
             {
                 // TODO: Add insert logic here
-                await clientCountry.Post(country);
+                await clientCountry.Post(country, httpPosted);
                 return RedirectToAction("Index");
             }
             catch
@@ -54,18 +56,18 @@ namespace web_viewer.Controllers
         // GET: Country/Edit/5
         public async Task<ActionResult> Edit(int? Id)
         {
-            var getcountry = await clientCountry.Get(Id);
-            return View(getcountry);
+            var country = await clientCountry.Get(Id);
+            return View(country);
         }
 
         // POST: Country/Edit/5
         [HttpPost]
-        public async Task<ActionResult> Edit(int? Id, Country country)
+        public async Task<ActionResult> Edit(int? Id, Country country, HttpPostedFileBase httpPosted)
         {
             try
             {
                 // TODO: Add update logic here
-                await clientCountry.Put(country, Id);
+                await clientCountry.Put(country, Id, httpPosted);
                 return RedirectToAction("Index");
             }
             catch
@@ -77,8 +79,8 @@ namespace web_viewer.Controllers
         // GET: Country/Delete/5
         public async Task<ActionResult> Delete(int? Id)
         {
-            var getCountry = await clientCountry.Get(Id);
-            return View(getCountry);
+            var country = await clientCountry.Get(Id);
+            return View(country);
         }
 
         // POST: Country/Delete/5
