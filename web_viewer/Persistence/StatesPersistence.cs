@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using web_viewer.Helper;
 using web_viewer.Models.Places;
 
@@ -48,7 +49,7 @@ namespace web_viewer.Persistence
                                     new SelectListItem() {
                                         Value = state.Id.ToString(),
                                         Text = state.Label,
-                                        Selected = country.Id == state.CountryId
+                                        Selected = state.CountryId == country.Id
                                     }
                                 }
                             };
@@ -114,8 +115,11 @@ namespace web_viewer.Persistence
             }
             return new States();
         }
-        public async Task<Boolean> Post(States states, HttpPostedFileBase httpPosted)
+        public async Task<Boolean> Post(States states)
         {
+            HttpFileCollectionBase httpFileCollection = Request.Files;
+            FileUpload fileUpload = new FileUpload();
+
             try
             {
                 if (httpPosted != null && httpPosted.ContentLength > 0)
@@ -147,28 +151,18 @@ namespace web_viewer.Persistence
             catch
             {
                 var directoryPath = @"~/Images/Flags/States/";
-                if (httpPosted != null && httpPosted.ContentLength > 0)
+                if (ModelState.IsValid)
                 {
                     var FlagName = Path.GetFileName(httpPosted.FileName);
                     var FlagExt = Path.GetExtension(FlagName);
                     if (FlagExt.Equals(".jpg") || FlagExt.Equals(".jpeg") || FlagExt.Equals(".png"))
                     {
-                        var FlagPath = Path.Combine(Server.MapPath(directoryPath), FlagName);
+                        var FlagPath = Server.MapPath(Path.Combine(directoryPath, FlagName));
+                        states.Flag.Symbol = FlagName;
+                        states.Flag.Path = FlagPath;
 
-                        var _states = new States()
-                        {
-                            Id = states.Id,
-                            Label = states.Label,
-                            Flag = new Flag()
-                            {
-                                Id = states.Flag.Id,
-                                Symbol = FlagName,
-                                Path = FlagPath
-                            }
-                        };
-
-                        httpPosted.SaveAs(_states.Flag.Path);
-                        await _clientStates.PostStates(_states);
+                        httpPosted.SaveAs(states.Flag.Path);
+                        await _clientStates.PostStates(states);
                     }
                     return true;
                 }

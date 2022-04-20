@@ -38,12 +38,12 @@ namespace web_viewer.Controllers
 
         // POST: Person/Create
         [HttpPost]
-        public async Task<ActionResult> Create(Person person, HttpPostedFileBase httpPosted)
+        public async Task<ActionResult> Create(Person person)
         {
             try
             {
                 // TODO: Add insert logic here
-                await clientPerson.Post(person, httpPosted);
+                await clientPerson.Post(person);
                 return RedirectToAction("Index");
             }
             catch

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using web_viewer.Helper;
 using web_viewer.Models.Perfil;
 using web_viewer.Models.Places;
@@ -117,85 +119,52 @@ namespace web_viewer.Persistence
             }
             return new PersonCountry();
         }
-        public async Task<Boolean> Post(Person person, HttpPostedFileBase httpPosted)
+        public async Task<Person> Post(Person person)
         {
+            HttpFileCollectionBase httpFileCollection = Request.Files;
+            FileUpload fileUpload = new FileUpload();
+
             try
             {
-                if (httpPosted != null && httpPosted.ContentLength > 0)
+                if (ModelState.IsValid)
                 {
                     await _blobClient.SetupCloudBlob();
 
-                    var getBlobName = _blobClient.GetRandomBlobName(httpPosted.FileName);
-                    var blobContainer = _blobClient._blobContainer.GetBlockBlobReference(getBlobName);
-                    await blobContainer.UploadFromStreamAsync(httpPosted.InputStream);
+                    var pictureNameBlob = _blobClient.GetRandomBlobName(httpFileCollection[0].FileName);
+                    var picturePathblob = _blobClient._blobContainer.GetBlockBlobReference(pictureNameBlob);
+                    await picturePathblob.UploadFromStreamAsync(httpFileCollection[0].InputStream);
 
-                    var _people = new Person()
-                    {
-                        Id = person.Id,
-                        FirstName = person.FirstName,
-                        LastName = person.LastName,
-                        Age = person.Age,
-                        Birthday = person.Birthday,
-                        Contacts = new Contacts()
-                        {
-                            Id = person.Contacts.Id,
-                            Email = person.Contacts.Email,
-                            Mobile = person.Contacts.Mobile
-                        },
-                        Picture = new Pictures()
-                        {
-                            Id = person.Picture.Id,
-                            Symbol = blobContainer.Name,
-                            Path = blobContainer.Uri.AbsolutePath,
-                        },
-                        CountryId = person.CountryId
-                    };
+                    person.Picture.Symbol = picturePathblob.Name.ToString();
+                    person.Picture.Path = picturePathblob.Uri.AbsolutePath.ToString();
 
-                    await _clientPerson.PostPerson(_people);
-                    return true;
+                    await _clientPerson.PostPerson(person);
                 }
-                return false;
             }
             catch
             {
-                var directoryPath = @"~/Images/Flags/People/";
-                if (httpPosted != null && httpPosted.ContentLength > 0)
+                if (ModelState.IsValid)
                 {
-                    var PicturesName = Path.GetFileName(httpPosted.FileName);
-                    var PicturesExt = Path.GetExtension(PicturesName);
-                    if (PicturesExt.Equals(".jpg") || PicturesExt.Equals(".jpeg") || PicturesExt.Equals(".png"))
+                    var directoryPath = @"../web_viewer/uploads/pictures/person";
+                    // Create pictute on server
+                    var pictureName = Path.GetFileName(httpFileCollection[0].FileName);
+                    var picturePath = Server.MapPath(Path.Combine(directoryPath, pictureName));
+
+                    // Add Picture reference to model and save
+                    var pictureLocalPath = string.Concat(directoryPath, pictureName);
+                    var PictureExt = Path.GetExtension(pictureName);
+
+                    if (PictureExt.Equals(".jpg") || PictureExt.Equals(".jpeg") || PictureExt.Equals(".png"))
                     {
-                        var PicturesPath = Path.Combine(Server.MapPath(directoryPath), PicturesName);
+                        person.Picture.Symbol = pictureName;
+                        person.Picture.Path = pictureLocalPath;
+                        fileUpload.SaveAs(picturePath);
 
-                        var _people = new Person()
-                        {
-                            Id = person.Id,
-                            FirstName = person.FirstName,
-                            LastName = person.LastName,
-                            Age = person.Age,
-                            Birthday = person.Birthday,
-                            Contacts = new Contacts()
-                            {
-                                Id = person.Contacts.Id,
-                                Email = person.Contacts.Email,
-                                Mobile = person.Contacts.Mobile
-                            },
-                            Picture = new Pictures()
-                            {
-                                Id = person.Picture.Id,
-                                Symbol = PicturesName,
-                                Path = PicturesPath,
-                            },
-                            CountryId = person.CountryId
-                        };
-
-                        httpPosted.SaveAs(_people.Picture.Path);
-                        await _clientPerson.PostPerson(_people);
+                        Debug.WriteLine(person.FirstName);
+                        await _clientPerson.PostPerson(person);
                     }
-                    return true;
                 }
-                return false;
-            }           
+            }
+            return new Person();
         }
         public async Task<PersonCountry> Update(int? Id)
         {
@@ -328,7 +297,7 @@ namespace web_viewer.Persistence
         }
         public async Task<Person> Delete(int? Id)
         {
-            var deletePerson = await _clientPerson.DeletPerson(Id);
+            var deletePerson = await _clientPerson.GetPersonById(Id);
 
             try
             {
@@ -351,7 +320,7 @@ namespace web_viewer.Persistence
         {
             try
             {
-                var deletePerson = await _clientPerson.DeletPerson(Id);
+                var deletePerson = await _clientPerson.DeletePerson(Id);
 
                 if (deletePerson.IsSuccessStatusCode)
                 {

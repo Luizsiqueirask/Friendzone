@@ -168,7 +168,7 @@ namespace web_viewer.Helper
         {
             return await _clientPerfil.PutAsJsonAsync($"api/Person/{Id}", person);
         }
-        public async Task<HttpResponseMessage> DeletPerson(int? Id)
+        public async Task<HttpResponseMessage> DeletePerson(int? Id)
         {
             return await _clientPerfil.DeleteAsync($"api/Person/{Id}");
         }

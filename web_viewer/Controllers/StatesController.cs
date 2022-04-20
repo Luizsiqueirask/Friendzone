@@ -38,12 +38,12 @@ namespace web_viewer.Controllers
 
         // POST: States/Create
         [HttpPost]
-        public async Task<ActionResult> Create(States states, HttpPostedFileBase httpPosted)
+        public async Task<ActionResult> Create(States states)
         {
             try
             {
                 // TODO: Add insert logic here
-                await clientStates.Post(states, httpPosted);
+                await clientStates.Post(states);
                 return RedirectToAction("Index");
             }
             catch
