@@ -302,11 +302,6 @@
     <Compile Include="Models\Places\Country.cs" />
     <Compile Include="Models\Places\Flag.cs" />
     <Compile Include="Models\Places\States.cs" />
-    <Compile Include="Persistence\CountryPersistence.cs" />
-    <Compile Include="Persistence\FriendsPersistence.cs" />
-    <Compile Include="Persistence\FriendshipPersistence.cs" />
-    <Compile Include="Persistence\PersonPersistence.cs" />
-    <Compile Include="Persistence\StatesPersistence.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
